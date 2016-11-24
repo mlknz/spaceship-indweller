@@ -1,12 +1,12 @@
 {
-  "name": "basic-node-webpack-app",
+  "name": "gypsy-threejs-app",
   "version": "0.0.0",
   "engines": {
     "node": ">=5.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mlknz/Basic-Node-Webpack-App.git"
+    "url": "https://github.com/mlknz/gypsy-threejs-app.git"
   },
   "devDependencies": {
     "babel-core": "^6.4.5",

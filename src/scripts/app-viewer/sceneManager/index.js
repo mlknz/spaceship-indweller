@@ -2,9 +2,21 @@ import AssetsLoader from '../assetsLoader';
 
 import sceneDescription from './sceneDescription.js';
 
+const sceneReadyEvent = new Event('sceneReady');
+
 class SceneManager {
     constructor() {
-        this.createSceneFromDescription();
+        this.scene = new THREE.Scene();
+
+        this.assetsLoader = new AssetsLoader(this.scene);
+
+        document.addEventListener('assetsLoaded', this.onAssetsLoaded.bind(this));
+
+        this.assetsLoader.loadAssets(sceneDescription.assets);
+    }
+
+    onAssetsLoaded() {
+        this.createSceneFromDescription(this.scene);
 
         this.cube = this.scene.getObjectByName('Cube');
 
@@ -14,13 +26,12 @@ class SceneManager {
         spotLight.shadow.mapSize.width = 1024;
         spotLight.shadow.mapSize.height = 1024;
 
-        this.assetsLoader = new AssetsLoader(this.scene);
-        this.assetsLoader.loadModel();
+        this.assetsLoader.loadModelTMP();
+        document.dispatchEvent(sceneReadyEvent);
     }
 
-    createSceneFromDescription() {
-        this.scene = new THREE.Scene();
-        this.addChildrenFromDescription(this.scene, sceneDescription.model.children);
+    createSceneFromDescription(scene) {
+        this.addChildrenFromDescription(scene, sceneDescription.model.children);
     }
 
     addChildrenFromDescription(cur, curChildrenDescription) {
@@ -46,13 +57,17 @@ class SceneManager {
 
         let obj;
         if (objType === 'Mesh' || d.object && d.object.geometry) {
+
             const geom = this.createObjectFromDescription(d.object.geometry);
             let mat = null;
             if (d.object.material) mat = this.createObjectFromDescription(d.object.material);
             obj = new THREE.Mesh(geom, mat);
+
         } else {
+
             if (args instanceof Array) obj = new THREE[objType](...args);
             else obj = new THREE[objType](args);
+
         }
 
         if (d.properties) this.addObjectProperties(obj, d.properties);
@@ -65,17 +80,22 @@ class SceneManager {
         let q;
         for (p in props) {
             if (props.hasOwnProperty(p)) {
+
                 if (props[p] instanceof Object) { // need only 1 property depth level now
+
                     if (!obj[p]) obj[p] = {};
+
                     for (q in props[p]) {
                         if (props[p].hasOwnProperty(q)) {
                             obj[p][q] = props[p][q];
                         }
                     }
+
                 } else {
                     obj[p] = props[p];
                 }
             }
+
         }
     }
 

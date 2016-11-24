@@ -1,4 +1,16 @@
 const sceneDescription = {
+    assets: [
+        {
+            name: 'model',
+            type: 'json',
+            path: 'assets/model.json'
+        },
+        {
+            name: 'planeTex',
+            type: 'texture',
+            path: 'assets/textures/uv_grid.jpg'
+        }
+    ],
     model: {
         children: [
             {
@@ -9,7 +21,7 @@ const sceneDescription = {
                     },
                     material: {
                         type: 'MeshStandardMaterial',
-                        args: {color: '#bb3355', side: 2, metalness: 0.2, roughness: 0.7},
+                        args: {color: '#ffffff', side: 2, metalness: 0.2, roughness: 0.7},
                         properties: {
                             name: 'planeMaterial'
                         }
@@ -21,7 +33,7 @@ const sceneDescription = {
                         x: Math.PI / 2
                     },
                     castShadow: false,
-                    recieveShadow: true
+                    receiveShadow: true
                 }
             },
             {
@@ -40,8 +52,8 @@ const sceneDescription = {
                     position: {
                         y: 3
                     },
-                    castShadow: false,
-                    recieveShadow: true
+                    castShadow: true,
+                    receiveShadow: false
                 }
             },
             {

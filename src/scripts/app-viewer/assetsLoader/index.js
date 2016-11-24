@@ -1,11 +1,56 @@
+const assetsLoadedEvent = new Event('assetsLoaded');
+
 class AssetsLoader {
     constructor(scene) {
         this.scene = scene;
+
+        this.assets = {};
         this.objectLoader = new THREE.ObjectLoader();
         this.textureLoader = new THREE.TextureLoader();
     }
 
-    loadModel() {
+    loadAssets(assetsArr) {
+        const loadPromises = [];
+
+        let loadPromise;
+        assetsArr.forEach(entry => {
+            loadPromise = this.loadModel(entry);
+            loadPromises.push(loadPromise);
+        });
+
+        Promise.all(loadPromises).then(() => {
+            document.dispatchEvent(assetsLoadedEvent);
+        });
+    }
+
+    loadModel(entry) {
+        return new Promise((resolve, reject) => {
+            setTimeout(resolve, 200, 'foo');
+        });
+    }
+
+    loadTexture(entry) {
+        // return new Promise(function (resolve, reject) {
+        //     xhr.onload = function () {
+        //       if (this.status >= 200 && this.status < 300) {
+        //         resolve(xhr.response);
+        //       } else {
+        //         reject({
+        //           status: this.status,
+        //           statusText: xhr.statusText
+        //         });
+        //       }
+        //     };
+        //     xhr.onerror = function () {
+        //       reject({
+        //         status: this.status,
+        //         statusText: xhr.statusText
+        //       });
+        //     };
+        //   });
+    }
+
+    loadModelTMP() {
         this.objectLoader.load('assets/model.json', (model) => {
             model.name = 'Model Root';
             this.scene.add(model);
@@ -21,7 +66,6 @@ class AssetsLoader {
             this.scene.traverse((obj) => {
                 if (obj instanceof THREE.Mesh && obj.material.name === 'planeMaterial') {
                     obj.material.map = texture;
-                    obj.material.color = new THREE.Color('#ffffff');
                     obj.material.needsUpdate = true;
                 }
             });

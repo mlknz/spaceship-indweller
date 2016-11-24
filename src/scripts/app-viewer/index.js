@@ -20,13 +20,18 @@ class AppViewer {
 
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFShadowMap;
+
+        this.sceneReady = false;
+        document.addEventListener('sceneReady', this.onSceneReady.bind(this));
     }
 
     onSceneReady() {
-        console.log('scene loaded');
+        this.sceneReady = true;
     }
 
     update(dt) {
+        if (!this.sceneReady) return;
+
         config.time += dt;
 
         this.sceneManager.update(dt, config.time);
