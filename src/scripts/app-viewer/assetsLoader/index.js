@@ -4,7 +4,10 @@ class AssetsLoader {
     constructor(scene) {
         this.scene = scene;
 
-        this.assets = {};
+        this.assets = {
+            objects: {},
+            textures: {}
+        };
         this.objectLoader = new THREE.ObjectLoader();
         this.textureLoader = new THREE.TextureLoader();
     }
@@ -14,8 +17,21 @@ class AssetsLoader {
 
         let loadPromise;
         assetsArr.forEach(entry => {
-            loadPromise = this.loadModel(entry);
-            loadPromises.push(loadPromise);
+            switch (entry.type) {
+
+            case 'json':
+                loadPromise = this.loadJsonModel(entry);
+                loadPromises.push(loadPromise);
+                break;
+
+            case 'texture':
+                loadPromise = this.loadTexture(entry);
+                loadPromises.push(loadPromise);
+                break;
+
+            default:
+                console.warning('unhandled', entry);
+            }
         });
 
         Promise.all(loadPromises).then(() => {
@@ -23,58 +39,35 @@ class AssetsLoader {
         });
     }
 
-    loadModel(entry) {
+    loadJsonModel(entry) {
         return new Promise((resolve, reject) => {
-            setTimeout(resolve, 200, 'foo');
+            this.objectLoader.load(entry.path, (model) => {
+                this.assets.objects[entry.name] = model;
+                resolve();
+            },
+            (xhr) => { // progress
+                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+            },
+            (e) => { // error
+                console.log('error while loading model', e);
+                reject(e);
+            });
         });
     }
 
     loadTexture(entry) {
-        // return new Promise(function (resolve, reject) {
-        //     xhr.onload = function () {
-        //       if (this.status >= 200 && this.status < 300) {
-        //         resolve(xhr.response);
-        //       } else {
-        //         reject({
-        //           status: this.status,
-        //           statusText: xhr.statusText
-        //         });
-        //       }
-        //     };
-        //     xhr.onerror = function () {
-        //       reject({
-        //         status: this.status,
-        //         statusText: xhr.statusText
-        //       });
-        //     };
-        //   });
-    }
-
-    loadModelTMP() {
-        this.objectLoader.load('assets/model.json', (model) => {
-            model.name = 'Model Root';
-            this.scene.add(model);
-        },
-        (xhr) => {
-            console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-        },
-        (e) => {
-            console.log('error while loading model', e);
-        });
-
-        this.textureLoader.load('assets/textures/uv_grid.jpg', (texture) => {
-            this.scene.traverse((obj) => {
-                if (obj instanceof THREE.Mesh && obj.material.name === 'planeMaterial') {
-                    obj.material.map = texture;
-                    obj.material.needsUpdate = true;
-                }
+        return new Promise((resolve, reject) => {
+            this.textureLoader.load(entry.path, (texture) => {
+                this.assets.textures[entry.name] = texture;
+                resolve();
+            },
+            (xhr) => { // progress
+                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+            },
+            (e) => { // error
+                console.log('error while loading model', e);
+                reject(e);
             });
-        },
-        (xhr) => {
-            console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-        },
-        (e) => {
-            console.log('error while loading model', e);
         });
     }
 }

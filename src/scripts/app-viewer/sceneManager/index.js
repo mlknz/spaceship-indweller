@@ -18,6 +18,18 @@ class SceneManager {
     onAssetsLoaded() {
         this.createSceneFromDescription(this.scene);
 
+        const model = this.assetsLoader.assets.objects.model;
+        model.name = 'Model Root';
+        this.scene.add(model);
+
+        const tex = this.assetsLoader.assets.textures.planeTex;
+        this.scene.traverse((obj) => {
+            if (obj instanceof THREE.Mesh && obj.material.name === 'planeMaterial') {
+                obj.material.map = tex;
+                obj.material.needsUpdate = true;
+            }
+        });
+
         this.cube = this.scene.getObjectByName('Cube');
 
         const spotLight = this.scene.getObjectByName('spotLight');
@@ -26,7 +38,6 @@ class SceneManager {
         spotLight.shadow.mapSize.width = 1024;
         spotLight.shadow.mapSize.height = 1024;
 
-        this.assetsLoader.loadModelTMP();
         document.dispatchEvent(sceneReadyEvent);
     }
 
