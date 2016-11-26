@@ -14,6 +14,13 @@ const sceneDescription = {
     model: {
         children: [
             {
+                type: 'asset/json',
+                name: 'model',
+                properties: {
+                    name: 'JSON Model'
+                }
+            },
+            {
                 object: {
                     geometry: {
                         type: 'PlaneBufferGeometry',
@@ -21,7 +28,16 @@ const sceneDescription = {
                     },
                     material: {
                         type: 'MeshStandardMaterial',
-                        args: {color: '#ffffff', side: 2, metalness: 0.2, roughness: 0.7},
+                        args: {
+                            color: '#ffffff',
+                            map: {
+                                type: 'asset/texture',
+                                srcName: 'planeTex'
+                            },
+                            side: 2,
+                            metalness: 0.2,
+                            roughness: 0.7
+                        },
                         properties: {
                             name: 'planeMaterial'
                         }

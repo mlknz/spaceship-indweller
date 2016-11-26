@@ -18,18 +18,6 @@ class SceneManager {
     onAssetsLoaded() {
         this.createSceneFromDescription(this.scene);
 
-        const model = this.assetsLoader.assets.objects.model;
-        model.name = 'Model Root';
-        this.scene.add(model);
-
-        const tex = this.assetsLoader.assets.textures.planeTex;
-        this.scene.traverse((obj) => {
-            if (obj instanceof THREE.Mesh && obj.material.name === 'planeMaterial') {
-                obj.material.map = tex;
-                obj.material.needsUpdate = true;
-            }
-        });
-
         this.cube = this.scene.getObjectByName('Cube');
 
         const spotLight = this.scene.getObjectByName('spotLight');
@@ -58,16 +46,28 @@ class SceneManager {
     }
 
     createObjectFromDescription(d) {
+        let obj = null;
+        let args = null;
         let objType = 'Object3D';
+
         if (d.object && d.object.type) objType = d.object.type;
         else if (d.type) objType = d.type;
 
-        let args = null;
         if (d.object && d.object.args) args = d.object.args;
         else if (d.args) args = d.args;
+        for (const prop in args) {
+            if (args.hasOwnProperty(prop)) {
+                if (args[prop].type && args[prop].type === 'asset/texture') {
+                    args[prop] = this.assetsLoader.assets.textures[args[prop].srcName];
+                }
+            }
+        }
 
-        let obj;
-        if (objType === 'Mesh' || d.object && d.object.geometry) {
+        if (objType === 'asset/json') {
+
+            obj = this.assetsLoader.assets.objects[d.name];
+
+        } else if (objType === 'Mesh' || d.object && d.object.geometry) {
 
             const geom = this.createObjectFromDescription(d.object.geometry);
             let mat = null;
@@ -81,6 +81,7 @@ class SceneManager {
 
         }
 
+        if (!obj) obj = new THREE.Object3D();
         if (d.properties) this.addObjectProperties(obj, d.properties);
 
         return obj;
