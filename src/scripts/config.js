@@ -1,5 +1,10 @@
 const config = {
+
     isDebug: window.location.hash.substr(1) === 'debug',
+    isIOS: /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream,
+    useDDSTextures: true,
+    usePVRTextures: true,
+
     time: 0,
 
     renderer: {

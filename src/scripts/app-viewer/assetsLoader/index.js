@@ -16,6 +16,9 @@ class AssetsLoader {
         };
         this.objectLoader = new THREE.ObjectLoader();
         this.textureLoader = new THREE.TextureLoader();
+
+        this.useDDS = !config.isIOS && config.useDDSTextures;
+        this.usePVR = config.isIOS && config.usePVRTextures;
         this.DDSLoader = new THREE.DDSLoader();
         this.PVRLoader = new THREE.PVRLoader();
     }
@@ -24,26 +27,47 @@ class AssetsLoader {
         const loadPromises = [];
 
         let loadPromise;
+        let path;
+        let entryName;
         let loader;
         let entryList;
         assetsArr.forEach(entry => {
             switch (entry.type) {
 
             case 'json':
+                path = entry.path;
                 loader = this.objectLoader;
                 entryList = this.assets.objects;
+                entryName = entry.name;
                 break;
 
             case 'texture':
+                path = entry.path;
                 loader = this.textureLoader;
                 entryList = this.assets.textures;
+                entryName = entry.name;
+
+                if (entry.path instanceof Array) {
+                    for (let i = 0; i < entry.path.length; i++) {
+                        path = entry.path[i];
+                        if (this.useDDS && entry.path[i].includes('.dds')) {
+                            loader = this.DDSLoader;
+                            break;
+                        }
+                        if (this.usePVR && entry.path[i].includes('.pvr')) {
+                            loader = this.PVRLoader;
+                            break;
+                        }
+                    }
+                }
+
                 break;
 
             default:
                 throw new Error('unknow asset type in sceneDescription: ' + entry.type);
             }
 
-            loadPromise = this.loadEntry(entry, entryList, loader);
+            loadPromise = this.loadEntry(path, entryList, entryName, loader);
             loadPromises.push(loadPromise);
         });
 
@@ -52,10 +76,10 @@ class AssetsLoader {
         });
     }
 
-    loadEntry(entry, entryList, loaderIn) {
+    loadEntry(path, entryList, entryName, loaderIn) {
         return new Promise((resolve, reject) => {
-            loaderIn.load(entry.path, (model) => {
-                entryList[entry.name] = model;
+            loaderIn.load(path, (model) => {
+                entryList[entryName] = model;
                 resolve();
             },
             (xhr) => { // progress

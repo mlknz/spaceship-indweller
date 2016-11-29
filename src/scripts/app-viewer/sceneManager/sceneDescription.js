@@ -8,7 +8,7 @@ const sceneDescription = {
         {
             name: 'planeTex',
             type: 'texture',
-            path: 'assets/textures/uv_grid.jpg'
+            path: ['assets/textures/uv_grid.dds', 'assets/textures/uv_grid.pvr', 'assets/textures/uv_grid.jpg']
         }
     ],
     model: {
