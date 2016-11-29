@@ -29,6 +29,13 @@ class SceneManager {
         document.dispatchEvent(sceneReadyEvent);
     }
 
+    update(dt, time) {
+        this.cube.position.x = Math.cos(time) * 3;
+        this.cube.position.z = Math.sin(time) * 3;
+        this.cube.rotation.y += dt;
+        this.cube.rotation.z += dt / 3;
+    }
+
     createSceneFromDescription(scene) {
         this.addChildrenFromDescription(scene, sceneDescription.model.children);
     }
@@ -58,7 +65,7 @@ class SceneManager {
         for (const prop in args) {
             if (args.hasOwnProperty(prop)) {
                 if (args[prop].type && args[prop].type === 'asset/texture') {
-                    args[prop] = this.assetsLoader.assets.textures[args[prop].srcName];
+                    args[prop] = this.assetsLoader.assets.textures[args[prop].name];
                 }
             }
         }
@@ -93,7 +100,7 @@ class SceneManager {
         for (p in props) {
             if (props.hasOwnProperty(p)) {
 
-                if (props[p] instanceof Object) { // need only 1 property depth level now
+                if (props[p] instanceof Object) { // only 1 property depth level now
 
                     if (!obj[p]) obj[p] = {};
 
@@ -109,13 +116,6 @@ class SceneManager {
             }
 
         }
-    }
-
-    update(dt, time) {
-        this.cube.position.x = Math.cos(time) * 3;
-        this.cube.position.z = Math.sin(time) * 3;
-        this.cube.rotation.y += dt;
-        this.cube.rotation.z += dt / 3;
     }
 }
 

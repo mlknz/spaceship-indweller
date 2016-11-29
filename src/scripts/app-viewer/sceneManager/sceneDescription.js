@@ -32,7 +32,7 @@ const sceneDescription = {
                             color: '#ffffff',
                             map: {
                                 type: 'asset/texture',
-                                srcName: 'planeTex'
+                                name: 'planeTex'
                             },
                             side: 2,
                             metalness: 0.2,
