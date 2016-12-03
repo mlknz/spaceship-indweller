@@ -1,6 +1,9 @@
 import AssetsLoader from '../assetsLoader';
 
 import sceneDescription from './sceneDescription.js';
+import materialsDescription from './materialsDescription';
+
+import MaterialDecorator from '../materialDecorator';
 
 const sceneReadyEvent = new Event('sceneReady');
 
@@ -10,6 +13,8 @@ class SceneManager {
 
         this.assetsLoader = new AssetsLoader(this.scene);
 
+        this.materialDecorator = new MaterialDecorator(materialsDescription);
+
         document.addEventListener('assetsLoaded', this.onAssetsLoaded.bind(this));
 
         this.assetsLoader.loadAssets(sceneDescription.assets);
@@ -18,7 +23,9 @@ class SceneManager {
     onAssetsLoaded() {
         this.createSceneFromDescription(this.scene);
 
-        this.cube = this.scene.getObjectByName('Cube');
+        this.materialDecorator.rewriteSingleMaterials(this.scene);
+
+        this.carouselBody = this.scene.getObjectByName('carousel_body');
 
         const spotLight = this.scene.getObjectByName('spotLight');
         spotLight.shadow = new THREE.LightShadow(new THREE.PerspectiveCamera(60, 1, 1, 2500));
@@ -29,11 +36,8 @@ class SceneManager {
         document.dispatchEvent(sceneReadyEvent);
     }
 
-    update(dt, time) {
-        this.cube.position.x = Math.cos(time) * 3;
-        this.cube.position.z = Math.sin(time) * 3;
-        this.cube.rotation.y += dt;
-        this.cube.rotation.z += dt / 3;
+    update(dt, time) { // eslint-disable-line
+        this.carouselBody.rotation.z -= dt / 5;
     }
 
     createSceneFromDescription(scene) {

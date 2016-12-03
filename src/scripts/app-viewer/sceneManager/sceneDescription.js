@@ -9,6 +9,26 @@ const sceneDescription = {
             name: 'planeTex',
             type: 'texture',
             path: ['assets/textures/uv_grid.dds', 'assets/textures/uv_grid.pvr', 'assets/textures/uv_grid.jpg']
+        },
+        {
+            name: 'carousel_base_diffuse',
+            type: 'texture',
+            path: 'assets/textures/carousel/carousel_base_diffuse_2k.png'
+        },
+        {
+            name: 'carousel_base_normal',
+            type: 'texture',
+            path: 'assets/textures/carousel/carousel_base_normal_1k.png'
+        },
+        {
+            name: 'carousel_body_diffuse',
+            type: 'texture',
+            path: 'assets/textures/carousel/carousel_body_diffuse_2k.png'
+        },
+        {
+            name: 'carousel_body_normal',
+            type: 'texture',
+            path: 'assets/textures/carousel/carousel_body_normal_1k.png'
         }
     ],
     model: {
@@ -46,30 +66,10 @@ const sceneDescription = {
                 properties: {
                     name: 'Plane',
                     rotation: {
-                        x: Math.PI / 2
+                        x: -Math.PI / 2
                     },
                     castShadow: false,
                     receiveShadow: true
-                }
-            },
-            {
-                object: {
-                    geometry: {
-                        type: 'BoxBufferGeometry',
-                        args: [3, 3, 5]
-                    },
-                    material: {
-                        type: 'MeshStandardMaterial',
-                        args: {color: '#88cc55', metalness: 0.2}
-                    }
-                },
-                properties: {
-                    name: 'Cube',
-                    position: {
-                        y: 3
-                    },
-                    castShadow: true,
-                    receiveShadow: false
                 }
             },
             {
