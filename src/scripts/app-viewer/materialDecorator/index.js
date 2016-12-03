@@ -11,7 +11,8 @@ class MaterialDecorator {
         this.materialsCache = [];
     }
 
-    rewriteSingleMaterials(model) {
+    rewriteSingleMaterials(model, textures) {
+        this.textures = textures;
         model.traverse(obj => {
             if (obj instanceof THREE.Mesh && !obj.name.includes('_instanced')) {
                 if (obj.material instanceof THREE.MultiMaterial) {
@@ -55,12 +56,13 @@ class MaterialDecorator {
         return newMat;
     }
 
-    _getMaterialDefines(originalMaterial, extProps) {
+    _getMaterialDefines(originalMaterial, materialDescription = {}) {
         let defines = '';
         // defines += '#define ALPHATEST 0.9\n';
         // defines += '#define USE_SHADOWMAP 1\n';
         // if (this.config.renderer.useSSAO) defines += '#define USE_SSAOMAP 1\n';
-        if (originalMaterial.map instanceof THREE.Texture ||
+
+        if (originalMaterial.map instanceof THREE.Texture || materialDescription.map ||
             (originalMaterial.uniforms && originalMaterial.uniforms.map.value instanceof THREE.Texture)) {
             defines += '#define USE_MAP 1\n';
         }
@@ -73,12 +75,12 @@ class MaterialDecorator {
             defines += '#define USE_BUMPMAP 1\n';
         }
 
-        if (originalMaterial.normalMap instanceof THREE.Texture) {
+        if (originalMaterial.normalMap instanceof THREE.Texture || materialDescription.normalMap) {
             defines += '#define USE_NORMALMAP 1\n';
         }
 
-        if (extProps) {
-            if (extProps.useRoughnessMap) {
+        if (materialDescription) {
+            if (materialDescription.useRoughnessMap) {
                 defines += '#define USE_ROUGHNESSMAP 1\n';
             }
         }
@@ -97,9 +99,9 @@ class MaterialDecorator {
         console.log(originalMaterial.name);
         const uniforms = THREE.UniformsUtils.clone(THREE.ShaderLib.standard.uniforms);
 
-        const extProps = this.materialsDescription[newMaterialName];
+        const materialDescription = this.materialsDescription[newMaterialName];
 
-        const defines = this._getMaterialDefines(originalMaterial, extProps);
+        const defines = this._getMaterialDefines(originalMaterial, materialDescription);
         const vertexShader = defines + vertexShaderIn;
         const fragmentShader = defines + fragmentShaderIn;
 
@@ -111,6 +113,14 @@ class MaterialDecorator {
         uniforms.roughnessMap.value = null;
         uniforms.roughness.value = originalMaterial.roughness || 0.6;
         uniforms.metalness.value = originalMaterial.metalness || 0.1;
+
+        if (materialDescription) {
+            uniforms.map.value = this.textures[materialDescription.map] || uniforms.map.value;
+            uniforms.normalMap.value = this.textures[materialDescription.normalMap] || uniforms.normalMap.value;
+            uniforms.diffuse.value = materialDescription.color ? new THREE.Color(materialDescription.color) : uniforms.diffuse.value;
+            uniforms.roughness.value = materialDescription.roughness || uniforms.roughness.value;
+            uniforms.metalness.value = materialDescription.metalness || uniforms.metalness.value;
+        }
 
         uniforms.ssaoMap = {type: 't', value: null};
         uniforms.ssaoMapIntensity = {type: 'f', value: 1.01};
@@ -125,6 +135,8 @@ class MaterialDecorator {
             fragmentShader
         });
         newMaterial.name = newMaterialName;
+        // newMaterial.castShadow = true; // originalMaterial.castShadow;
+        // newMaterial.receiveShadow = true; // originalMaterial.receiveShadow;
         this.materialsCache.push(newMaterial);
         return newMaterial;
     }

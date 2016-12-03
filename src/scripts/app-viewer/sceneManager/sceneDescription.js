@@ -75,7 +75,7 @@ const sceneDescription = {
             {
                 object: {
                     type: 'DirectionalLight',
-                    args: 0x707070
+                    args: 0xaaaaaa
                 },
                 properties: {
                     name: 'directLight',

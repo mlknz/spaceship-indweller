@@ -23,7 +23,7 @@ class SceneManager {
     onAssetsLoaded() {
         this.createSceneFromDescription(this.scene);
 
-        this.materialDecorator.rewriteSingleMaterials(this.scene);
+        this.materialDecorator.rewriteSingleMaterials(this.scene, this.assetsLoader.assets.textures);
 
         this.carouselBody = this.scene.getObjectByName('carousel_body');
 
