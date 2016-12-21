@@ -317,7 +317,4 @@ gl_Position = projectionMatrix * mvPosition;
     	}
 	#endif
 #endif
-#ifdef IS_FOLIAGE
-vDepth = (gl_Position.z / gl_Position.w) * 0.5 + 0.5;
-#endif
 }

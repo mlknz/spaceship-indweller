@@ -37,7 +37,7 @@ class SceneManager {
     }
 
     update(dt, time) { // eslint-disable-line
-        this.carouselBody.rotation.z -= dt / 5;
+        if (this.carouselBody) this.carouselBody.rotation.z -= dt / 5;
     }
 
     createSceneFromDescription(scene) {

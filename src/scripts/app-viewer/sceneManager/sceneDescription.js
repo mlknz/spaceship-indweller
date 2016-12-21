@@ -1,9 +1,14 @@
 const sceneDescription = {
     assets: [
         {
-            name: 'model',
+            name: 'carousel',
             type: 'json',
-            path: 'assets/model.json'
+            path: 'assets/carousel.json'
+        },
+        {
+            name: 'spaceship_interior',
+            type: 'json',
+            path: 'assets/spaceship_interior.json'
         },
         {
             name: 'planeTex',
@@ -11,33 +16,23 @@ const sceneDescription = {
             path: ['assets/textures/uv_grid.dds', 'assets/textures/uv_grid.pvr', 'assets/textures/uv_grid.jpg']
         },
         {
-            name: 'carousel_base_diffuse',
+            name: 'floorTile',
             type: 'texture',
-            path: 'assets/textures/carousel/carousel_base_diffuse_2k.png'
+            path: 'assets/textures/tile2.jpg'
         },
         {
-            name: 'carousel_base_normal',
+            name: 'wallTile',
             type: 'texture',
-            path: 'assets/textures/carousel/carousel_base_normal_1k.png'
-        },
-        {
-            name: 'carousel_body_diffuse',
-            type: 'texture',
-            path: 'assets/textures/carousel/carousel_body_diffuse_2k.png'
-        },
-        {
-            name: 'carousel_body_normal',
-            type: 'texture',
-            path: 'assets/textures/carousel/carousel_body_normal_1k.png'
+            path: 'assets/textures/tile3.jpg'
         }
     ],
     model: {
         children: [
             {
                 type: 'asset/json',
-                name: 'model',
+                name: 'spaceship_interior',
                 properties: {
-                    name: 'JSON Model'
+                    name: 'Spaceship Interior'
                 }
             },
             {

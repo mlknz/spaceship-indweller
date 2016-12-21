@@ -1,30 +1,24 @@
 const materialsDescription = {
-    carousel_base: {
-        map: 'carousel_base_diffuse',
-        normalMap: 'carousel_base_normal',
+    floor: {
+        map: 'floorTile',
         color: 0xffffff,
-        metalness: 0.4,
-        roughness: 0.7
+        metalness: 0.2,
+        roughness: 0.8,
+        repeat: [25, 25]
     },
-    carousel_metal_rust: {
-        map: 'carousel_body_diffuse',
-        normalMap: 'carousel_body_normal',
+    wall: {
+        map: 'wallTile',
         color: 0xffffff,
-        metalness: 0.4,
-        roughness: 0.7
+        metalness: 0.2,
+        roughness: 0.8,
+        repeat: [10, 10]
     },
-    carousel_wood: {
-        map: 'carousel_body_diffuse',
-        normalMap: 'carousel_body_normal',
+    roof: {
+        map: 'floorTile',
         color: 0xffffff,
-        metalness: 0.4,
-        roughness: 0.7
-    },
-    carousel_metal_chrome: {
-        normalMap: 'carousel_body_normal',
-        color: 0xffffff,
-        metalness: 0.9,
-        roughness: 0.2
+        metalness: 0.2,
+        roughness: 0.8,
+        repeat: [25, 25]
     }
 };
 

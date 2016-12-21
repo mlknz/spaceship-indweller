@@ -14,7 +14,7 @@ const config = {
     },
 
     camera: {
-        cameraPos: [18, 19, 18],
+        cameraPos: [60, 30, 50],
         near: 1,
         far: 1400
     },

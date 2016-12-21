@@ -120,6 +120,16 @@ class MaterialDecorator {
             uniforms.diffuse.value = materialDescription.color ? new THREE.Color(materialDescription.color) : uniforms.diffuse.value;
             uniforms.roughness.value = materialDescription.roughness || uniforms.roughness.value;
             uniforms.metalness.value = materialDescription.metalness || uniforms.metalness.value;
+
+            if (materialDescription.repeat) {
+                uniforms.map.value.wrapS = uniforms.map.value.wrapT = THREE.RepeatWrapping;
+                uniforms.map.value.repeat.set(materialDescription.repeat[0], materialDescription.repeat[1]);
+                uniforms.offsetRepeat.value.set(0, 0, materialDescription.repeat[0], materialDescription.repeat[1]);
+            }
+            if (materialDescription.offset) {
+                uniforms.offsetRepeat.value.x = materialDescription.offset[0];
+                uniforms.offsetRepeat.value.y = materialDescription.offset[1];
+            }
         }
 
         uniforms.ssaoMap = {type: 't', value: null};
@@ -134,9 +144,10 @@ class MaterialDecorator {
             vertexShader,
             fragmentShader
         });
+
         newMaterial.name = newMaterialName;
-        // newMaterial.castShadow = true; // originalMaterial.castShadow;
-        // newMaterial.receiveShadow = true; // originalMaterial.receiveShadow;
+        // newMaterial.castShadow = originalMaterial.castShadow;
+        // newMaterial.receiveShadow = originalMaterial.receiveShadow;
         this.materialsCache.push(newMaterial);
         return newMaterial;
     }

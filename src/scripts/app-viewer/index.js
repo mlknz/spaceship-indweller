@@ -18,8 +18,8 @@ class AppViewer {
         this.controls = new Controls(this.camera, this.renderer.domElement, this.scene);
         this.controls.resetCameraOrbit();
 
-        this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.PCFShadowMap;
+        // this.renderer.shadowMap.enabled = true;
+        // this.renderer.shadowMap.type = THREE.PCFShadowMap;
 
         this.sceneReady = false;
         document.addEventListener('sceneReady', this.onSceneReady.bind(this));
