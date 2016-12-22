@@ -22,6 +22,7 @@ class App {
         renderer.setPixelRatio(devicePixelRatio);
 
         const appViewer = new AppViewer(renderer);
+        this.appViewer = appViewer;
         const appUi = new AppUi(renderer);
 
         function resize() {

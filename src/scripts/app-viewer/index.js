@@ -15,11 +15,6 @@ class AppViewer {
         this.sceneManager = new SceneManager();
 
         this.camera = new THREE.PerspectiveCamera(60, aspectRatio, config.camera.near, config.camera.far);
-        this.controls = new Controls(this.camera, this.renderer.domElement, this.scene);
-        this.controls.resetCameraOrbit();
-
-        // this.renderer.shadowMap.enabled = true;
-        // this.renderer.shadowMap.type = THREE.PCFShadowMap;
 
         this.sceneReady = false;
         document.addEventListener('sceneReady', this.onSceneReady.bind(this));
@@ -27,6 +22,8 @@ class AppViewer {
 
     onSceneReady() {
         this.sceneReady = true;
+        this.controls = new Controls(this.camera, this.renderer.domElement, this.sceneManager.scene);
+        this.controls.resetCameraOrbit();
     }
 
     update(dt) {
