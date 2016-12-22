@@ -1,24 +1,31 @@
 const materialsDescription = {
     floor: {
-        map: 'floorTile',
+        map: 'floor_tile_diffuse',
+        normalMap: 'floor_tile_normal',
         color: 0xffffff,
-        metalness: 0.2,
+        metalness: 0.3,
         roughness: 0.8,
-        repeat: [25, 25]
+        repeat: [30, 30]
     },
     wall: {
-        map: 'wallTile',
+        map: 'wall_tile_diffuse',
+        normalMap: 'wall_tile_normal',
         color: 0xffffff,
         metalness: 0.2,
         roughness: 0.8,
-        repeat: [10, 10]
+        repeat: [12.8, 12.8]
     },
     roof: {
-        map: 'floorTile',
+        map: 'floor_tile_diffuse',
+        normalMap: 'floor_tile_normal',
         color: 0xffffff,
-        metalness: 0.2,
+        metalness: 0.3,
         roughness: 0.8,
-        repeat: [25, 25]
+        repeat: [30, 30]
+    },
+    door: {
+        map: 'door_diffuse',
+        color: 0xffffff
     }
 };
 

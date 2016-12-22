@@ -25,19 +25,17 @@ class SceneManager {
 
         this.materialDecorator.rewriteSingleMaterials(this.scene, this.assetsLoader.assets.textures);
 
-        this.carouselBody = this.scene.getObjectByName('carousel_body');
-
-        const spotLight = this.scene.getObjectByName('spotLight');
-        spotLight.shadow = new THREE.LightShadow(new THREE.PerspectiveCamera(60, 1, 1, 2500));
-        spotLight.shadow.bias = 0.0001;
-        spotLight.shadow.mapSize.width = 1024;
-        spotLight.shadow.mapSize.height = 1024;
+        // const spotLight = this.scene.getObjectByName('spotLight');
+        // spotLight.shadow = new THREE.LightShadow(new THREE.PerspectiveCamera(60, 1, 1, 2500));
+        // spotLight.shadow.bias = 0.0001;
+        // spotLight.shadow.mapSize.width = 1024;
+        // spotLight.shadow.mapSize.height = 1024;
 
         document.dispatchEvent(sceneReadyEvent);
     }
 
     update(dt, time) { // eslint-disable-line
-        if (this.carouselBody) this.carouselBody.rotation.z -= dt / 5;
+        // if (this.carouselBody) this.carouselBody.rotation.z -= dt / 5;
     }
 
     createSceneFromDescription(scene) {

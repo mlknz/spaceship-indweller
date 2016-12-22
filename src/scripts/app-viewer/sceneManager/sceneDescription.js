@@ -1,29 +1,39 @@
 const sceneDescription = {
     assets: [
         {
-            name: 'carousel',
-            type: 'json',
-            path: 'assets/carousel.json'
-        },
-        {
             name: 'spaceship_interior',
             type: 'json',
             path: 'assets/spaceship_interior.json'
         },
+        // {
+        //     name: 'planeTex',
+        //     type: 'texture',
+        //     path: ['assets/textures/uv_grid.dds', 'assets/textures/uv_grid.pvr', 'assets/textures/uv_grid.jpg']
+        // },
         {
-            name: 'planeTex',
+            name: 'door_diffuse',
             type: 'texture',
-            path: ['assets/textures/uv_grid.dds', 'assets/textures/uv_grid.pvr', 'assets/textures/uv_grid.jpg']
+            path: 'assets/textures/door_diffuse.jpg'
         },
         {
-            name: 'floorTile',
+            name: 'floor_tile_diffuse',
             type: 'texture',
-            path: 'assets/textures/tile2.jpg'
+            path: 'assets/textures/floor_tile_diffuse.jpg'
         },
         {
-            name: 'wallTile',
+            name: 'floor_tile_normal',
             type: 'texture',
-            path: 'assets/textures/tile3.jpg'
+            path: 'assets/textures/floor_tile_normal.jpg'
+        },
+        {
+            name: 'wall_tile_diffuse',
+            type: 'texture',
+            path: 'assets/textures/wall_tile_diffuse.jpg'
+        },
+        {
+            name: 'wall_tile_normal',
+            type: 'texture',
+            path: 'assets/textures/wall_tile_normal.jpg'
         }
     ],
     model: {
@@ -35,42 +45,51 @@ const sceneDescription = {
                     name: 'Spaceship Interior'
                 }
             },
+            // {
+            //     object: {
+            //         geometry: {
+            //             type: 'PlaneBufferGeometry',
+            //             args: [20, 20, 80, 90]
+            //         },
+            //         material: {
+            //             type: 'MeshStandardMaterial',
+            //             args: {
+            //                 color: '#ffffff',
+            //                 map: {
+            //                     type: 'asset/texture',
+            //                     name: 'planeTex'
+            //                 },
+            //                 side: 2,
+            //                 metalness: 0.2,
+            //                 roughness: 0.7
+            //             },
+            //             properties: {
+            //                 name: 'planeMaterial'
+            //             }
+            //         }
+            //     },
+            //     properties: {
+            //         name: 'Plane',
+            //         rotation: {
+            //             x: -Math.PI / 2
+            //         },
+            //         castShadow: false,
+            //         receiveShadow: true
+            //     }
+            // },
             {
                 object: {
-                    geometry: {
-                        type: 'PlaneBufferGeometry',
-                        args: [20, 20, 80, 90]
-                    },
-                    material: {
-                        type: 'MeshStandardMaterial',
-                        args: {
-                            color: '#ffffff',
-                            map: {
-                                type: 'asset/texture',
-                                name: 'planeTex'
-                            },
-                            side: 2,
-                            metalness: 0.2,
-                            roughness: 0.7
-                        },
-                        properties: {
-                            name: 'planeMaterial'
-                        }
-                    }
+                    type: 'AmbientLight',
+                    args: 0x777777
                 },
                 properties: {
-                    name: 'Plane',
-                    rotation: {
-                        x: -Math.PI / 2
-                    },
-                    castShadow: false,
-                    receiveShadow: true
+                    name: 'ambientLight'
                 }
             },
             {
                 object: {
                     type: 'DirectionalLight',
-                    args: 0xaaaaaa
+                    args: 0x888888
                 },
                 properties: {
                     name: 'directLight',
@@ -83,17 +102,16 @@ const sceneDescription = {
             },
             {
                 object: {
-                    type: 'SpotLight',
-                    args: 0xffffff
+                    type: 'DirectionalLight',
+                    args: 0x888888
                 },
                 properties: {
-                    name: 'spotLight',
+                    name: 'directLight2',
                     position: {
-                        x: 5,
-                        y: 20,
-                        z: 10
-                    },
-                    castShadow: true
+                        x: 30,
+                        y: 30,
+                        z: -5
+                    }
                 }
             }
         ]
