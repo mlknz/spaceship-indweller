@@ -1,6 +1,6 @@
 const assetsLoadedEvent = new Event('assetsLoaded');
 
-window.THREE = THREE;
+window.THREE = window.THREE || THREE;
 require('three/examples/js/loaders/DDSLoader');
 require('three/examples/js/loaders/PVRLoader');
 

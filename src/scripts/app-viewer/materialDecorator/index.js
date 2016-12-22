@@ -1,5 +1,3 @@
-const THREE = require('three');
-
 const defaultVertexShader = require('./shaders/rawCustomStandard.vert');
 const defaultFragmentShader = require('./shaders/rawCustomStandard.frag');
 

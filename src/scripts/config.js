@@ -8,7 +8,7 @@ const config = {
     time: 0,
 
     renderer: {
-        clearColor: 0x550000,
+        clearColor: 0x141424,
         clearAlpha: true,
         devicePixelRatio: window.devicePixelRatio || 1
     },
