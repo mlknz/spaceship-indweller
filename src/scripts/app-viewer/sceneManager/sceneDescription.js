@@ -80,7 +80,7 @@ const sceneDescription = {
             {
                 object: {
                     type: 'AmbientLight',
-                    args: 0x777777
+                    args: 0xaaaaaa
                 },
                 properties: {
                     name: 'ambientLight'
@@ -89,7 +89,7 @@ const sceneDescription = {
             {
                 object: {
                     type: 'DirectionalLight',
-                    args: 0x888888
+                    args: 0xffffff
                 },
                 properties: {
                     name: 'directLight',
@@ -109,7 +109,7 @@ const sceneDescription = {
                     name: 'directLight2',
                     position: {
                         x: 30,
-                        y: 30,
+                        y: -30,
                         z: -5
                     }
                 }

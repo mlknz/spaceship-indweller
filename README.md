@@ -1,4 +1,6 @@
-# Gypsy threejs app.
+# Spaceship Indweller.
+
+First person quest game with three.js.
 
 **To launch the project locally:**
 
