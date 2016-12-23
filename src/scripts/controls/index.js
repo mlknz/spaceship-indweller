@@ -147,7 +147,7 @@ class Controls {
         this.resetCameraWalker();
 
         this._controlsObject.position.fromArray([-47, 8, -29]); // Binding Point
-        this._controlsObject.rotation.y = 0; // Rotates Yaw Object
+        this._controlsObject.rotation.y = -1; // Rotates Yaw Object
         this._controlsObject.children[0].rotation.x = 0; // Rotates Pitch Object
 
         this.rotateOnMouseDown = false;

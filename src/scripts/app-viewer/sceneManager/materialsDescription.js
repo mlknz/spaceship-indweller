@@ -25,7 +25,9 @@ const materialsDescription = {
     },
     door: {
         map: 'door_diffuse',
-        color: 0xffffff
+        color: 0xffffff,
+        metalness: 0.2,
+        roughness: 0.8
     }
 };
 
