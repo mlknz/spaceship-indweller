@@ -18,7 +18,7 @@ const config = {
         near: 1,
         far: 1400,
         walkerNear: 0.1,
-        walkerFar: 140
+        walkerFar: 240
     },
 
     controls: {
