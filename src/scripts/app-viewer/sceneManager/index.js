@@ -25,6 +25,8 @@ class SceneManager {
 
         this.materialDecorator.rewriteSingleMaterials(this.scene, this.assetsLoader.assets.textures);
 
+        this.hideNavigationMeshes();
+
         // const spotLight = this.scene.getObjectByName('spotLight');
         // spotLight.shadow = new THREE.LightShadow(new THREE.PerspectiveCamera(60, 1, 1, 2500));
         // spotLight.shadow.bias = 0.0001;
@@ -34,8 +36,10 @@ class SceneManager {
         document.dispatchEvent(sceneReadyEvent);
     }
 
-    update(dt, time) { // eslint-disable-line
-        // if (this.carouselBody) this.carouselBody.rotation.z -= dt / 5;
+    hideNavigationMeshes() {
+        this.scene.traverse(obj => {
+            if (obj.material && (obj.name.includes('navmesh') || obj.name.includes('door_nav_blocker'))) obj.material.visible = false;
+        });
     }
 
     createSceneFromDescription(scene) {

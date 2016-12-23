@@ -1,6 +1,7 @@
 import config from '../config.js';
 
 import SceneManager from './sceneManager';
+import AppLogicManager from '../appLogicManager';
 import Controls from '../controls';
 
 class AppViewer {
@@ -24,6 +25,10 @@ class AppViewer {
         this.sceneReady = true;
         this.controls = new Controls(this.camera, this.renderer.domElement, this.sceneManager.scene);
         this.controls.resetCameraOrbit();
+
+        this.appLogicManager = new AppLogicManager(this.sceneManager.scene);
+
+        this.controls.addBlockers(this.appLogicManager.movementBlockers);
     }
 
     update(dt) {
@@ -31,8 +36,8 @@ class AppViewer {
 
         config.time += dt;
 
-        this.sceneManager.update(dt, config.time);
         this.controls.update(dt);
+        this.appLogicManager.update(dt, config.time);
         this.renderer.render(this.sceneManager.scene, this.camera);
     }
 
