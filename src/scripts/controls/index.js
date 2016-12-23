@@ -133,6 +133,7 @@ class Controls {
         this.resetCameraOrbit();
 
         this.navMesh = scene.getObjectByName('navmesh');
+        this.navBlockers = [];
 
         this.onKeyDown = onKeyDown.bind(this);
         this.onKeyUp = onKeyUp.bind(this);
@@ -190,6 +191,11 @@ class Controls {
         this.walkerControls.enabled = false;
 
         // document.dispatchEvent(disableWalkerEvent);
+    }
+
+    addBlockers(blockersArr) {
+        if (blockersArr instanceof Array) Array.prototype.push.apply(this.navBlockers, blockersArr);
+        else throw new Error('controls.addBlockers method expects Array as argument');
     }
 
     resetCameraOrbit() {
@@ -268,10 +274,11 @@ class Controls {
             v.raycaster.ray.origin.copy(cObj.position);
             intersections = [];
             intersections = v.raycaster.intersectObject(this.navMesh, false);
+            const intersectionsWithBlockers = v.raycaster.intersectObjects(this.navBlockers, false);
 
-            const willBeOnObject = intersections.length > 0;
+            const couldMoveThere = (intersections.length > 0) && (intersectionsWithBlockers.length < 1);
 
-            if (isOnObject && !willBeOnObject) {
+            if (isOnObject && !couldMoveThere) {
                 const newP = cObj.position.clone();
 
                 const posArr = raycastedObj.object.geometry.attributes.position.array;
