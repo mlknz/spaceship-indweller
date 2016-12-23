@@ -6,14 +6,14 @@ class AppLogicManager {
     constructor(scene) {
         this.scene = scene;
 
-        this.movementBlockers = [];
+        this.navMeshes = [];
 
         this.doorMeshes = this.findDoorMeshes(this.scene);
 
         this.doors = this.createDoors(this.doorMeshes);
 
         this.doors.forEach(door => {
-            this.movementBlockers.push(door.navBlocker);
+            this.navMeshes.push(door.underDoorNavMesh);
         });
     }
 

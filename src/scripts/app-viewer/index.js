@@ -28,7 +28,9 @@ class AppViewer {
 
         this.appLogicManager = new AppLogicManager(this.sceneManager.scene);
 
-        this.controls.addBlockers(this.appLogicManager.movementBlockers);
+        const mainNavMesh = this.sceneManager.scene.getObjectByName('navmesh');
+        this.controls.addNavMeshes([mainNavMesh]);
+        this.controls.addNavMeshes(this.appLogicManager.navMeshes);
     }
 
     update(dt) {

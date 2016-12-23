@@ -132,8 +132,7 @@ class Controls {
 
         this.resetCameraOrbit();
 
-        this.navMesh = scene.getObjectByName('navmesh');
-        this.navBlockers = [];
+        this.navMeshes = [];
 
         this.onKeyDown = onKeyDown.bind(this);
         this.onKeyUp = onKeyUp.bind(this);
@@ -193,8 +192,8 @@ class Controls {
         // document.dispatchEvent(disableWalkerEvent);
     }
 
-    addBlockers(blockersArr) {
-        if (blockersArr instanceof Array) Array.prototype.push.apply(this.navBlockers, blockersArr);
+    addNavMeshes(navMeshesArr) {
+        if (navMeshesArr instanceof Array) Array.prototype.push.apply(this.navMeshes, navMeshesArr);
         else throw new Error('controls.addBlockers method expects Array as argument');
     }
 
@@ -213,9 +212,9 @@ class Controls {
     resetCameraWalker() {
         this.camera.position.set(0, 0, 0);
         this.camera.rotation.set(0, 0, 0);
-        // this.camera.near = config.camera.walkerNear;
-        // this.camera.far = config.camera.walkerFar;
-        // this.camera.updateProjectionMatrix();
+        this.camera.near = config.camera.walkerNear;
+        this.camera.far = config.camera.walkerFar;
+        this.camera.updateProjectionMatrix();
     }
 
     update(delta) {
@@ -239,7 +238,7 @@ class Controls {
             v.raycaster.ray.origin.copy(cObj.position);
 
             let intersections = [];
-            intersections = v.raycaster.intersectObject(this.navMesh, false);
+            intersections = v.raycaster.intersectObjects(this.navMeshes, false);
 
             const isOnObject = intersections.length > 0;
 
@@ -273,10 +272,9 @@ class Controls {
 
             v.raycaster.ray.origin.copy(cObj.position);
             intersections = [];
-            intersections = v.raycaster.intersectObject(this.navMesh, false);
-            const intersectionsWithBlockers = v.raycaster.intersectObjects(this.navBlockers, false);
+            intersections = v.raycaster.intersectObjects(this.navMeshes, false);
 
-            const couldMoveThere = (intersections.length > 0) && (intersectionsWithBlockers.length < 1);
+            const couldMoveThere = intersections.length > 0;
 
             if (isOnObject && !couldMoveThere) {
                 const newP = cObj.position.clone();
@@ -317,7 +315,7 @@ class Controls {
                 // TODO: should work without it (but it doesn't)
                 v.raycaster.ray.origin.copy(cObj.position);
                 intersections = [];
-                intersections = v.raycaster.intersectObject(this.navMesh, false);
+                intersections = v.raycaster.intersectObjects(this.navMeshes, false);
                 if (intersections.length < 1) cObj.position.copy(prevPos);
             }
         }

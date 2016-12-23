@@ -16,7 +16,9 @@ const config = {
     camera: {
         cameraPos: [60, 30, 50],
         near: 1,
-        far: 1400
+        far: 1400,
+        walkerNear: 0.1,
+        walkerFar: 140
     },
 
     controls: {
