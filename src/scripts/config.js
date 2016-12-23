@@ -25,6 +25,12 @@ const config = {
         minDistance: 1,
         maxDistance: 1000,
         rotateSpeed: 0.25
+    },
+
+    appLogic: {
+        doors: {
+            openingTime: 3
+        }
     }
 };
 

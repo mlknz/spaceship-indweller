@@ -32,14 +32,16 @@ class AppLogicManager {
 
         let door;
         doorMeshes.forEach(doorMesh => {
-            door = new Door(doorMesh);
+            door = new Door(doorMesh, config.appLogic.doors);
             doors.push(door);
         });
         return doors;
     }
 
     update(dt, time) { // eslint-disable-line
-
+        this.doors.forEach(door => {
+            door.update(dt);
+        });
     }
 
 }
