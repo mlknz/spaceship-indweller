@@ -27,18 +27,12 @@ class SceneManager {
 
         this.hideNavigationMeshes();
 
-        // const spotLight = this.scene.getObjectByName('spotLight');
-        // spotLight.shadow = new THREE.LightShadow(new THREE.PerspectiveCamera(60, 1, 1, 2500));
-        // spotLight.shadow.bias = 0.0001;
-        // spotLight.shadow.mapSize.width = 1024;
-        // spotLight.shadow.mapSize.height = 1024;
-
         document.dispatchEvent(sceneReadyEvent);
     }
 
     hideNavigationMeshes() {
         this.scene.traverse(obj => {
-            if (obj.material && (obj.name.includes('navmesh') || obj.name.includes('door_nav_blocker'))) obj.material.visible = false;
+            if (obj.material && obj.material.name.includes('navmesh')) obj.material.visible = false;
         });
     }
 

@@ -1,12 +1,15 @@
 import config from '../config.js';
 
 import Door from './prefabs/door.js';
+import ActiveObject from './prefabs/activeObject.js';
 
 class AppLogicManager {
     constructor(scene) {
         this.scene = scene;
 
         this.navMeshes = [];
+        this.actionBlockers = [];
+        this.activeObjects = [];
 
         this.doorMeshes = this.findDoorMeshes(this.scene);
 
@@ -14,7 +17,14 @@ class AppLogicManager {
 
         this.doors.forEach(door => {
             this.navMeshes.push(door.underDoorNavMesh);
+            this.actionBlockers.push(door.underDoorNavMesh);
+
+            door.doorControls.forEach(controllerMesh => {
+                const activeObj = new ActiveObject({type: 'door', controllerMesh, object: door});
+                this.activeObjects.push(activeObj);
+            });
         });
+
     }
 
     findDoorMeshes(scene) {

@@ -5,11 +5,6 @@ const sceneDescription = {
             type: 'json',
             path: 'assets/spaceship_interior.json'
         },
-        // {
-        //     name: 'planeTex',
-        //     type: 'texture',
-        //     path: ['assets/textures/uv_grid.dds', 'assets/textures/uv_grid.pvr', 'assets/textures/uv_grid.jpg']
-        // },
         {
             name: 'door_diffuse',
             type: 'texture',
@@ -45,38 +40,6 @@ const sceneDescription = {
                     name: 'Spaceship Interior'
                 }
             },
-            // {
-            //     object: {
-            //         geometry: {
-            //             type: 'PlaneBufferGeometry',
-            //             args: [20, 20, 80, 90]
-            //         },
-            //         material: {
-            //             type: 'MeshStandardMaterial',
-            //             args: {
-            //                 color: '#ffffff',
-            //                 map: {
-            //                     type: 'asset/texture',
-            //                     name: 'planeTex'
-            //                 },
-            //                 side: 2,
-            //                 metalness: 0.2,
-            //                 roughness: 0.7
-            //             },
-            //             properties: {
-            //                 name: 'planeMaterial'
-            //             }
-            //         }
-            //     },
-            //     properties: {
-            //         name: 'Plane',
-            //         rotation: {
-            //             x: -Math.PI / 2
-            //         },
-            //         castShadow: false,
-            //         receiveShadow: true
-            //     }
-            // },
             {
                 object: {
                     type: 'AmbientLight',

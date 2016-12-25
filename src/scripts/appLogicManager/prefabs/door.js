@@ -13,6 +13,7 @@ class Door {
         this.underDoorNavMesh = null;
         this.doorLeft = null;
         this.doorRight = null;
+        this.doorControls = [];
 
         this.state = undefined;
 
@@ -25,6 +26,8 @@ class Door {
                 this.doorLeft = this.mesh.children[i];
             } else if (this.mesh.children[i].name.includes('door_right')) {
                 this.doorRight = this.mesh.children[i];
+            } else if (this.mesh.children[i].name.includes('door_controls')) {
+                this.doorControls.push(this.mesh.children[i]);
             }
         }
 
