@@ -105,6 +105,8 @@ class Controls {
         this.isDesktop = device.desktop();
         this.rotateOnMouseDown = false;
 
+        this.currentFloorMesh = null;
+
         this.walkerTouchControls = null;
 
         this.orbitControls = new THREE.OrbitControls(camera, domElement);
@@ -242,6 +244,8 @@ class Controls {
 
             const isOnObject = intersections.length > 0;
 
+            if (isOnObject) this.currentFloorMesh = intersections[0].object;
+
             v.velocity.x -= v.velocity.x * 10.0 * delta;
             v.velocity.z -= v.velocity.z * 10.0 * delta;
             v.velocity.y -= v.gravity * delta;
@@ -275,6 +279,8 @@ class Controls {
             intersections = v.raycaster.intersectObjects(this.navMeshes, false);
 
             const couldMoveThere = intersections.length > 0;
+
+            if (isOnObject && couldMoveThere) this.currentFloorMesh = intersections[0].object;
 
             if (isOnObject && !couldMoveThere) {
                 const newP = cObj.position.clone();

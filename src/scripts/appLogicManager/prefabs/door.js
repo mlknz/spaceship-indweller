@@ -16,6 +16,7 @@ class Door {
         this.doorControls = [];
 
         this.state = undefined;
+        this.states = states;
 
         this._tPos = null;
 

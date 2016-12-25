@@ -28,6 +28,16 @@ class ActiveObject {
         highlightMesh.matrix.decompose(highlightMesh.position, highlightMesh.quaternion, highlightMesh.scale);
         highlightMesh.scale.multiplyScalar(1.05);
     }
+
+    makeAction() {
+        if (this.type === 'door') {
+            if (this.controllableObject.state === this.controllableObject.states.CLOSED) {
+                this.controllableObject.open();
+            } else if (this.controllableObject.state === this.controllableObject.states.OPEN) {
+                this.controllableObject.close();
+            }
+        }
+    }
 }
 
 export default ActiveObject;

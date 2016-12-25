@@ -29,7 +29,7 @@ const config = {
 
     appLogic: {
         doors: {
-            openingTime: 3
+            openingTime: 1.2
         }
     }
 };
