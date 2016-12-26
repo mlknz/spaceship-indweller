@@ -24,7 +24,8 @@ const config = {
     controls: {
         minDistance: 1,
         maxDistance: 1000,
-        rotateSpeed: 0.25
+        rotateSpeed: 0.25,
+        joystickReturnSpeed: 15
     },
 
     appLogic: {

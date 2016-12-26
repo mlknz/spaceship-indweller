@@ -37,18 +37,30 @@ class AppLogicManager {
             });
         });
 
-        document.addEventListener('interact', () => {
-            this.interactCommand = true;
+        const tV = new THREE.Vector2();
+        let tA = [];
+
+        document.addEventListener('interact', (e) => {
+            if (e.detail && e.detail.x && e.detail.y) {
+                tV.x = (e.detail.x - 0.5) * 2;
+                tV.y = (e.detail.y - 0.5) * 2;
+                this.fromEyeRaycaster.setFromCamera(tV, this.camera);
+                tA = this.fromEyeRaycaster.intersectObjects(this.activeObjectsColliders);
+                if (tA.length > 0) this.interactCommand = true;
+
+            } else {
+                this.interactCommand = true;
+            }
         });
 
         const interactInfo = document.createElement('div');
         interactInfo.style.position = 'absolute';
-        interactInfo.style.bottom = '60px';
+        interactInfo.style.bottom = '10px';
         interactInfo.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
         interactInfo.style.width = '20%';
-        interactInfo.style.height = '50px';
+        interactInfo.style.height = '30px';
         interactInfo.style.left = '40%';
-        interactInfo.innerHTML = 'Press E on keyboard interact with objects';
+        interactInfo.innerHTML = this.controls.isDesktop ? 'Press E to interact' : 'Touch to interact';
         interactInfo.style.display = 'none';
         document.body.appendChild(interactInfo);
         this.interactInfo = interactInfo;
@@ -81,17 +93,18 @@ class AppLogicManager {
         });
 
         for (i = 0; i < this.activeObjects.length; i++) {
-            this.activeObjects[i].deselectObject(); // todo: refactor
+            this.activeObjects[i].deselectObject();
         }
 
         if (this.controls.currentFloorMesh && !this.controls.currentFloorMesh.name.includes('door_nav_blocker')) {
-            // if click to use - set this._tV2 to mouse pos in NDC [-1, 1]
+
             this.fromEyeRaycaster.setFromCamera(this._tV2, this.camera);
             this._tArr = this.fromEyeRaycaster.intersectObjects(this.activeObjectsColliders);
 
             for (i = 0; i < this._tArr.length; i++) {
                 if (this._tArr[i].object.userData.activeObject) this._tArr[i].object.userData.activeObject.selectObject();
             }
+
         }
 
         this.interactInfo.style.display = this._tArr.length ? 'block' : 'none';
