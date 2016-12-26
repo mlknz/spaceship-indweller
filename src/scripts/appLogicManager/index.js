@@ -87,9 +87,13 @@ class AppLogicManager {
         return doors;
     }
 
-    update(dt, time) { // eslint-disable-line
+    update(dt, time) {
         this.doors.forEach(door => {
             door.update(dt);
+        });
+
+        this.activeObjects.forEach(activeObj => {
+            activeObj.update(time);
         });
 
         for (i = 0; i < this.activeObjects.length; i++) {

@@ -1,3 +1,6 @@
+import defaultVert from '../../app-viewer/materialDecorator/shaders/default.vert';
+import activeObjectSelectionFrag from '../../app-viewer/materialDecorator/shaders/activeObjectSelection.frag';
+
 class ActiveObject {
     constructor({type, controllerMesh, object} = {}) {
         this.type = type;
@@ -9,8 +12,8 @@ class ActiveObject {
 
         this.selected = false;
 
-        this.selectedColor = new THREE.Color('green');
-        this.deselectedColor = new THREE.Color('yellow');
+        this.selectedColor = new THREE.Color(0x55aaaa);
+        this.deselectedColor = new THREE.Color(0xff7777);
 
         this.controllerCollider = this.controller;
         for (let i = 0; i < this.controller.children.length; i++) {
@@ -27,8 +30,10 @@ class ActiveObject {
 
     addOutlineMesh() {
         const geom = this.controller.geometry;
-        const mat = new THREE.MeshBasicMaterial({color: 'red', side: THREE.BackSide, transparent: true});
-        mat.opacity = 0.4;
+        const mat = new THREE.MeshBasicMaterial({side: THREE.BackSide, transparent: true});
+
+        mat.color = this.deselectedColor;
+        mat.opacity = 0.2;
         const mesh = new THREE.Mesh(geom, mat);
         mesh.name = this.controller.name + '_outlineMesh';
 
@@ -43,9 +48,19 @@ class ActiveObject {
 
     addHighlightMesh() {
         const geom = this.controller.geometry;
-        const mat = new THREE.MeshBasicMaterial({side: THREE.FrontSide, transparent: true});
-        mat.color = this.deselectedColor;
-        mat.opacity = 0.2;
+        const uniforms = THREE.UniformsUtils.clone(THREE.ShaderLib.basic.uniforms);
+        const mat = new THREE.ShaderMaterial({
+            uniforms,
+            vertexShader: defaultVert,
+            fragmentShader: activeObjectSelectionFrag,
+            transparent: true
+        });
+
+        mat.uniforms.diffuse.value = this.deselectedColor;
+        mat.opacity = 0.05;
+        mat.uniforms.opacity.value = 0.2;
+
+        mat.uniforms.time = {value: 0};
 
         const mesh = new THREE.Mesh(geom, mat);
         mesh.name = this.controller.name + '_outlineMesh';
@@ -59,17 +74,23 @@ class ActiveObject {
         this.highlightMesh = mesh;
     }
 
+    update(time) {
+        this.highlightMesh.material.uniforms.time.value = time;
+    }
+
     selectObject() {
         if (!this.selected) {
             this.selected = true;
-            this.highlightMesh.material.color = this.selectedColor;
+            this.highlightMesh.material.uniforms.diffuse.value = this.selectedColor;
+            this.outlineMesh.material.color = this.selectedColor;
         }
     }
 
     deselectObject() {
         if (this.selected) {
             this.selected = false;
-            this.highlightMesh.material.color = this.deselectedColor;
+            this.highlightMesh.material.uniforms.diffuse.value = this.deselectedColor;
+            this.outlineMesh.material.color = this.deselectedColor;
         }
     }
 
