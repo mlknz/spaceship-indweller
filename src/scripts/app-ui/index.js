@@ -5,6 +5,7 @@ import StatsUi from './stats-ui.js';
 const startQuestEvent = new Event('startQuest');
 
 const toogleDoorsEvent = new Event('toogleDoors');
+const interactEvent = new Event('interact');
 
 class AppUi {
     constructor(renderer) {
@@ -34,19 +35,10 @@ class AppUi {
         document.body.appendChild(toogleDoorsButton);
 
         document.addEventListener('keydown', (e) => {
-            if (e.keyCode === 49) {
-                document.dispatchEvent(toogleDoorsEvent);
+            if (e.keyCode === 69) {
+                document.dispatchEvent(interactEvent);
             }
         });
-
-        const toogleDoorsInfo = document.createElement('div');
-        toogleDoorsInfo.style.position = 'absolute';
-        toogleDoorsInfo.style.top = '60px';
-        toogleDoorsInfo.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
-        toogleDoorsInfo.style.width = '400px';
-        toogleDoorsInfo.style.height = '50px';
-        toogleDoorsInfo.innerHTML = 'Press 1 on keyboard to toogle doors';
-        document.body.appendChild(toogleDoorsInfo);
 
     }
 
