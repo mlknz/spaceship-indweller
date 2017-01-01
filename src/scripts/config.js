@@ -1,5 +1,7 @@
-const config = {
+const device = require('device.js')();
 
+const config = {
+    isDesktop: device.desktop(),
     isDebug: window.location.hash.substr(1) === 'debug',
     isIOS: /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream,
     useDDSTextures: true,
@@ -23,7 +25,7 @@ const config = {
 
     controls: {
         minDistance: 1,
-        maxDistance: 1000,
+        maxDistance: 500,
         rotateSpeed: 0.25,
         joystickReturnSpeed: 15
     },

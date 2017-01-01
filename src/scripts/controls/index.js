@@ -3,8 +3,6 @@ window.THREE = window.THREE || THREE;
 require('three/examples/js/controls/OrbitControls.js');
 require('./PointerLockControls.js'); // with touchmove and mac trackpad support
 
-const device = require('device.js')();
-
 import config from '../config.js';
 import WalkerTouchControls from './walkerTouchControls.js';
 
@@ -102,7 +100,7 @@ class Controls {
         this.domElement = domElement;
 
         this.walkerEnabled = false;
-        this.isDesktop = device.desktop();
+        this.isDesktop = config.isDesktop;
         this.rotateOnMouseDown = false;
 
         this.currentFloorMesh = null;

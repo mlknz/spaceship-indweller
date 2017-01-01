@@ -1,5 +1,8 @@
 #include <common>
-#include <uv_pars_vertex>
+
+varying vec2 vUv;
+uniform vec4 offsetRepeat;
+
 #include <uv2_pars_vertex>
 #include <envmap_pars_vertex>
 #include <color_pars_vertex>
@@ -12,7 +15,7 @@ varying float vWorldPosY;
 
 void main() {
 
-	#include <uv_vertex>
+	vUv = uv * offsetRepeat.zw + offsetRepeat.xy;
 	#include <uv2_vertex>
 	#include <color_vertex>
 	#include <skinbase_vertex>
@@ -35,6 +38,7 @@ void main() {
 	#include <worldpos_vertex>
     vec4 worldPosition = modelMatrix * vec4( transformed, 1.0 );
     vWorldPosY = worldPosition.y;
+
 	#include <clipping_planes_vertex>
 	#include <envmap_vertex>
 

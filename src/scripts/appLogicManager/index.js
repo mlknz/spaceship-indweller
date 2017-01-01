@@ -1,12 +1,13 @@
 import config from '../config.js';
 
 import Door from './prefabs/door.js';
+import Starfield from './prefabs/starfield.js';
 import ActiveObject from './prefabs/activeObject.js';
 
 let i = 0;
 
 class AppLogicManager {
-    constructor(scene, camera, controls) {
+    constructor(renderer, scene, camera, controls) {
         this.scene = scene;
         this.camera = camera;
         this.controls = controls;
@@ -22,6 +23,8 @@ class AppLogicManager {
 
         this._tV2 = new THREE.Vector2(0);
         this._tArr = [];
+
+        this.starfield = new Starfield(renderer, this.scene);
 
         this.doorMeshes = this.findDoorMeshes(this.scene);
 

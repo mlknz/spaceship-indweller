@@ -26,7 +26,7 @@ class AppViewer {
         this.controls = new Controls(this.camera, this.renderer.domElement, this.sceneManager.scene);
         this.controls.resetCameraOrbit();
 
-        this.appLogicManager = new AppLogicManager(this.sceneManager.scene, this.camera, this.controls);
+        this.appLogicManager = new AppLogicManager(this.renderer, this.sceneManager.scene, this.camera, this.controls);
 
         const mainNavMesh = this.sceneManager.scene.getObjectByName('navmesh');
         this.controls.addNavMeshes([mainNavMesh]);
