@@ -2,7 +2,7 @@ import defaultVert from '../../app-viewer/materialDecorator/shaders/default.vert
 import activeObjectSelectionFrag from '../../app-viewer/materialDecorator/shaders/activeObjectSelection.frag';
 
 class ActiveObject {
-    constructor({type, controllerMesh, object} = {}) {
+    constructor({type, controllerMesh, object, outline, highlight} = {}) {
         this.type = type;
         this.controller = controllerMesh;
         this.controllableObject = object;
@@ -24,8 +24,8 @@ class ActiveObject {
         }
         this.controllerCollider.userData.activeObject = this;
 
-        this.addOutlineMesh();
-        this.addHighlightMesh();
+        if (outline) this.addOutlineMesh();
+        if (highlight) this.addHighlightMesh();
     }
 
     addOutlineMesh() {
@@ -75,22 +75,22 @@ class ActiveObject {
     }
 
     update(time) {
-        this.highlightMesh.material.uniforms.time.value = time;
+        if (this.highlightMesh) this.highlightMesh.material.uniforms.time.value = time;
     }
 
     selectObject() {
         if (!this.selected) {
             this.selected = true;
-            this.highlightMesh.material.uniforms.diffuse.value = this.selectedColor;
-            this.outlineMesh.material.color = this.selectedColor;
+            if (this.highlightMesh) this.highlightMesh.material.uniforms.diffuse.value = this.selectedColor;
+            if (this.outlineMesh) this.outlineMesh.material.color = this.selectedColor;
         }
     }
 
     deselectObject() {
         if (this.selected) {
             this.selected = false;
-            this.highlightMesh.material.uniforms.diffuse.value = this.deselectedColor;
-            this.outlineMesh.material.color = this.deselectedColor;
+            if (this.highlightMesh) this.highlightMesh.material.uniforms.diffuse.value = this.deselectedColor;
+            if (this.outlineMesh) this.outlineMesh.material.color = this.deselectedColor;
         }
     }
 
