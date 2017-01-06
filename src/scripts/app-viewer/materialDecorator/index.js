@@ -69,7 +69,7 @@ class MaterialDecorator {
         uniforms.lightMap.value = originalMaterial.lightMap;
         uniforms.bumpMap.value = (originalMaterial.bumpMap instanceof THREE.Texture) ? originalMaterial.bumpMap : null;
         uniforms.normalMap.value = (originalMaterial.normalMap instanceof THREE.Texture) ? originalMaterial.normalMap : null;
-        uniforms.diffuse.value = originalMaterial.color ? originalMaterial.color : new THREE.Color(0xaaaaaa);
+        uniforms.diffuse.value = originalMaterial.color ? originalMaterial.color : new THREE.Color(0xffffff);
         uniforms.roughnessMap.value = null;
         uniforms.roughness.value = originalMaterial.roughness || 0.6;
         uniforms.metalness.value = originalMaterial.metalness || 0.1;
@@ -89,7 +89,7 @@ class MaterialDecorator {
         const newMaterial = new THREE.RawShaderMaterial({
             uniforms,
             lights: true,
-            transparent: originalMaterial.transparent,
+            transparent: uniforms.opacity.value < 1 ? true : originalMaterial.transparent,
             side: originalMaterial.side,
             vertexShader,
             fragmentShader
@@ -110,6 +110,7 @@ class MaterialDecorator {
         uniforms.diffuse.value = materialDescription.color ? new THREE.Color(materialDescription.color) : uniforms.diffuse.value;
         uniforms.roughness.value = materialDescription.roughness || uniforms.roughness.value;
         uniforms.metalness.value = materialDescription.metalness || uniforms.metalness.value;
+        uniforms.opacity.value = materialDescription.opacity || 1;
 
         if (materialDescription.repeat) {
             uniforms.offsetRepeat.value.set(0, 0, materialDescription.repeat[0], materialDescription.repeat[1]);
