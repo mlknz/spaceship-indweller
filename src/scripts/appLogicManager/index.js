@@ -1,8 +1,12 @@
 import config from '../config.js';
+import gamestate from './gamestate.js';
 
 import Door from './prefabs/door.js';
 import Starfield from './prefabs/starfield.js';
 import ActiveObject from './prefabs/activeObject.js';
+
+const pauseEvent = new Event('pause');
+const unpauseEvent = new Event('unpause');
 
 let i = 0;
 
@@ -78,7 +82,6 @@ class AppLogicManager {
             outline: true, highlight: true
         });
         this.activeObjects.push(this.outerPipeBroken);
-        // this.activeObjectsColliders.push(this.outerPipeBroken.controllerCollider);
 
         this.outerPipeRepairedMesh.visible = false;
 
@@ -134,7 +137,52 @@ class AppLogicManager {
         return doors;
     }
 
+    pause() {
+        if (!gamestate.paused) {
+            gamestate.paused = true;
+            document.dispatchEvent(pauseEvent);
+        }
+    }
+
+    unpause() {
+        if (gamestate.paused) {
+            gamestate.paused = false;
+            document.dispatchEvent(unpauseEvent);
+        }
+    }
+
+    gameover(win) {
+        this.pause();
+
+        const gameoverDiv = document.getElementById('gameoverRoot');
+
+        const gameoverTextDiv = document.getElementById('gameoverText');
+        const gameoverText = win ? 'You Win!' : 'You Lose!';
+
+        gameoverTextDiv.innerHTML = gameoverText;
+
+        const startAgainButton = document.getElementById('startAgainButton');
+        startAgainButton.addEventListener('click', () => {
+            location.reload();
+        });
+
+        const goToSourceButton = document.getElementById('goToSourceButton');
+        goToSourceButton.addEventListener('click', () => {
+            window.open(config.repoUrl, '_blank');
+        });
+
+
+        gameoverDiv.style.display = 'block';
+    }
+
     update(dt, time) {
+        if (gamestate.doors.door_root_7 && !gamestate.pickups.suit) {
+            this.gameover(false);
+        }
+        if (gamestate.doors.door_root_7 && gamestate.pickups.suit) {
+            this.gameover(true);
+        }
+
         this.doors.forEach(door => {
             door.update(dt);
         });

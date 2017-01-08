@@ -140,6 +140,8 @@ class Controls {
         this.resetCameraOrbit();
 
         document.addEventListener('startQuest', this.enableWalker.bind(this));
+        document.addEventListener('pause', this.disableWalker.bind(this));
+        // document.addEventListener('unpause', this.enableWalker.bind(this));
     }
 
     enableWalker() {
@@ -172,7 +174,7 @@ class Controls {
     }
 
     disableWalker() {
-        this.resetCameraOrbit();
+        // this.resetCameraOrbit();
 
         if (this.isDesktop) {
             this._removeKeyboardListeners();
@@ -185,8 +187,8 @@ class Controls {
         }
 
         document.body.removeChild(this.infoEl);
-
-        this.orbitControls.enabled = true;
+        document.exitPointerLock();
+        // this.orbitControls.enabled = true;
         this.walkerControls.enabled = false;
 
         // document.dispatchEvent(disableWalkerEvent);

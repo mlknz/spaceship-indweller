@@ -1,4 +1,5 @@
 import config from '../config.js';
+import gamestate from '../appLogicManager/gamestate.js';
 
 import SceneManager from './sceneManager';
 import AppLogicManager from '../appLogicManager';
@@ -36,11 +37,13 @@ class AppViewer {
     update(dt) {
         if (!this.sceneReady) return;
 
-        config.time += dt;
+        if (!gamestate.paused) {
+            config.time += dt;
 
-        this.controls.update(dt);
-        this.appLogicManager.update(dt, config.time);
-        this.renderer.render(this.sceneManager.scene, this.camera);
+            this.controls.update(dt);
+            this.appLogicManager.update(dt, config.time);
+            this.renderer.render(this.sceneManager.scene, this.camera);
+        }
     }
 
     resize(width, height) {

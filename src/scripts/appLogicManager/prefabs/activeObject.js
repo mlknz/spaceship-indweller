@@ -1,3 +1,5 @@
+import gamestate from '../gamestate.js';
+
 import defaultVert from '../../app-viewer/materialDecorator/shaders/default.vert';
 import activeObjectSelectionFrag from '../../app-viewer/materialDecorator/shaders/activeObjectSelection.frag';
 
@@ -8,10 +10,10 @@ class ActiveObject {
 
         switch (this.type) {
         case 'suit':
-            this.disposeMessage = 'You have equipped space suit';
+            this.disposeMessage = 'You have equipped Space Suit';
             break;
         case 'repairKit':
-            this.disposeMessage = 'You picked up Repair Kit';
+            this.disposeMessage = 'You have picked up Repair Kit';
             break;
         default:
             this.disposeMessage = 'Default activeObject disposeMessage';
@@ -114,8 +116,10 @@ class ActiveObject {
         switch (this.type) {
         case 'door':
             if (this.controllableObject.state === this.controllableObject.states.CLOSED) {
+                gamestate.doors[this.controllableObject.mesh.name] = true;
                 this.controllableObject.open();
             } else if (this.controllableObject.state === this.controllableObject.states.OPEN) {
+                gamestate.doors[this.controllableObject.mesh.name] = false;
                 this.controllableObject.close();
             }
             break;
@@ -129,6 +133,9 @@ class ActiveObject {
     }
 
     dispose() {
+        if (this.type === 'suit') gamestate.pickups.suit = true;
+        else if (this.type === 'repairKit') gamestate.pickups.repairKit = true;
+
         for (let i = 0; i < this.activeObjectsColliders.length; i++) {
             if (this.activeObjectsColliders[i].name === this.controllerCollider.name) {
                 this.activeObjectsColliders.splice(i, 1);

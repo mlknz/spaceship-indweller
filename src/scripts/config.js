@@ -1,6 +1,7 @@
 const device = require('device.js')();
 
 const config = {
+    repoUrl: 'https://github.com/mlknz/spaceship-indweller',
     isDesktop: device.desktop(),
     isDebug: window.location.hash.substr(1) === 'debug',
     isIOS: /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream,
