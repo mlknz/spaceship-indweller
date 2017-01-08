@@ -2,8 +2,21 @@ import defaultVert from '../../app-viewer/materialDecorator/shaders/default.vert
 import activeObjectSelectionFrag from '../../app-viewer/materialDecorator/shaders/activeObjectSelection.frag';
 
 class ActiveObject {
-    constructor({type, controllerMesh, object, outline, highlight} = {}) {
+    constructor({type, controllerMesh, object, activeObjectsColliders, outline, highlight} = {}) {
         this.type = type;
+        this.disposeMessage = null;
+
+        switch (this.type) {
+        case 'suit':
+            this.disposeMessage = 'You have equipped space suit';
+            break;
+        case 'repairKit':
+            this.disposeMessage = 'You picked up Repair Kit';
+            break;
+        default:
+            this.disposeMessage = 'Default activeObject disposeMessage';
+        }
+
         this.controller = controllerMesh;
         this.controllableObject = object;
 
@@ -23,6 +36,9 @@ class ActiveObject {
             }
         }
         this.controllerCollider.userData.activeObject = this;
+
+        this.activeObjectsColliders = activeObjectsColliders;
+        this.activeObjectsColliders.push(this.controllerCollider);
 
         if (outline) this.addOutlineMesh();
         if (highlight) this.addHighlightMesh();
@@ -95,13 +111,49 @@ class ActiveObject {
     }
 
     makeAction() {
-        if (this.type === 'door') {
+        switch (this.type) {
+        case 'door':
             if (this.controllableObject.state === this.controllableObject.states.CLOSED) {
                 this.controllableObject.open();
             } else if (this.controllableObject.state === this.controllableObject.states.OPEN) {
                 this.controllableObject.close();
             }
+            break;
+        case 'suit':
+        case 'repairKit':
+            this.dispose();
+            break;
+        default:
+            console.log('unhandled activeObject action');
         }
+    }
+
+    dispose() {
+        for (let i = 0; i < this.activeObjectsColliders.length; i++) {
+            if (this.activeObjectsColliders[i].name === this.controllerCollider.name) {
+                this.activeObjectsColliders.splice(i, 1);
+            }
+        }
+
+        this.controller.parent.remove(this.controller);
+        if (this.highlightMesh) this.highlightMesh.parent.remove(this.highlightMesh);
+        if (this.outlineMesh) this.outlineMesh.parent.remove(this.outlineMesh);
+        this.controller = null;
+        this.highlightMesh = null;
+        this.outlineMesh = null;
+
+        this.activeObjectsColliders = null;
+        this.controller = null;
+        this.controllableObject = null;
+
+        const disposeInfo = document.createElement('div');
+        disposeInfo.className = 'disposeInfo';
+        disposeInfo.innerHTML = this.disposeMessage;
+        disposeInfo.style.display = 'block';
+        document.body.appendChild(disposeInfo);
+        setTimeout(() => {
+            disposeInfo.className = 'disposeInfoHidden';
+        }, 1000);
     }
 }
 
