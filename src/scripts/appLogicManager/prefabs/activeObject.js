@@ -13,7 +13,7 @@ class ActiveObject {
             this.disposeMessage = 'You have equipped Space Suit';
             break;
         case 'repairKit':
-            this.disposeMessage = 'You have picked up Repair Kit';
+            this.disposeMessage = 'You picked up Repair Kit';
             break;
         default:
             this.disposeMessage = 'Default activeObject disposeMessage';

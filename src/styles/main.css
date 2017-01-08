@@ -40,22 +40,26 @@ body {
     left: 40%;
 }
 
-.gameoverRoot {
+.gameoverRoot, .newGameRoot {
     position: absolute;
     display: none;
-    background-color: rgba(150, 150, 150, 0.9);
+    background-color: rgba(150, 150, 150, 0.8);
     width: 50%;
     height: 50%;
     left: 25%;
     top: 25%;
 }
 
-.gameoverText {
+.gameoverText, .newGameText {
     height: 75%;
     width: 100%;
     font-size: 20vh;
     font-weight: bold;
     text-align: center;
+}
+
+.newGameText {
+    font-size: 10vh;
 }
 
 .buttonsRoot {
@@ -78,7 +82,7 @@ body {
     line-height: 100%;
 }
 
-.startAgainButton:hover, .goToSourceButton:hover{
+.startAgainButton:hover, .goToSourceButton:hover, .startQuestButton:hover{
     background: #aa8888;
 }
 .dummy {

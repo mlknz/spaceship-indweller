@@ -161,17 +161,6 @@ class AppLogicManager {
 
         gameoverTextDiv.innerHTML = gameoverText;
 
-        const startAgainButton = document.getElementById('startAgainButton');
-        startAgainButton.addEventListener('click', () => {
-            location.reload();
-        });
-
-        const goToSourceButton = document.getElementById('goToSourceButton');
-        goToSourceButton.addEventListener('click', () => {
-            window.open(config.repoUrl, '_blank');
-        });
-
-
         gameoverDiv.style.display = 'block';
     }
 

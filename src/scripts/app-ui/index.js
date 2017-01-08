@@ -4,35 +4,31 @@ import StatsUi from './stats-ui.js';
 
 const startQuestEvent = new Event('startQuest');
 
-// const toogleDoorsEvent = new Event('toogleDoors');
 const interactEvent = new Event('interact');
 
 class AppUi {
     constructor(renderer) {
         if (config.isDebug) this.statsUi = new StatsUi(renderer);
 
-        const startQuestButton = document.createElement('button');
-        startQuestButton.style.position = 'absolute';
-        startQuestButton.style.width = '200px';
-        startQuestButton.style.height = '60px';
-        startQuestButton.innerHTML = 'Start Quest';
+        const newGameDiv = document.getElementById('newGameRoot');
+        newGameDiv.style.display = 'block';
+
+        const startQuestButton = document.getElementById('startQuestButton');
 
         startQuestButton.addEventListener('click', () => {
+            newGameDiv.style.display = 'none';
             document.dispatchEvent(startQuestEvent);
         });
-        document.body.appendChild(startQuestButton);
 
-        // const toogleDoorsButton = document.createElement('button');
-        // toogleDoorsButton.style.position = 'absolute';
-        // toogleDoorsButton.style.left = '200px';
-        // toogleDoorsButton.style.width = '200px';
-        // toogleDoorsButton.style.height = '60px';
-        // toogleDoorsButton.innerHTML = 'Toogle Doors';
-        //
-        // toogleDoorsButton.addEventListener('click', () => {
-        //     document.dispatchEvent(toogleDoorsEvent);
-        // });
-        // document.body.appendChild(toogleDoorsButton);
+        const startAgainButton = document.getElementById('startAgainButton');
+        startAgainButton.addEventListener('click', () => {
+            location.reload();
+        });
+
+        const goToSourceButtons = document.getElementsByClassName('goToSourceButton');
+        for (let i = 0; i < goToSourceButtons.length; i++) {
+            goToSourceButtons[i].addEventListener('click', this.gotoSource);
+        }
 
         document.addEventListener('keydown', (e) => {
             if (e.keyCode === 69) {
@@ -40,6 +36,10 @@ class AppUi {
             }
         });
 
+    }
+
+    gotoSource() {
+        window.open(config.repoUrl, '_blank');
     }
 
     update() {
