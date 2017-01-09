@@ -16,6 +16,11 @@ class AppLogicManager {
         this.camera = camera;
         this.controls = controls;
 
+        this.lights = [];
+        this.scene.children.forEach(obj => {
+            if (obj instanceof THREE.Light) this.lights.push({ light: obj, originalIntensity: obj.intensity });
+        });
+
         this.fromEyeRaycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, 0, 1), 0, 5);
 
         this.navMeshes = [];
@@ -160,6 +165,7 @@ class AppLogicManager {
     gameover() {
         document.dispatchEvent(pauseEvent);
 
+        this.interactInfo.style.zIndex = '-10';
         const gameoverDiv = document.getElementById('gameoverRoot');
 
         const gameoverTextDiv = document.getElementById('gameoverText');
@@ -171,7 +177,7 @@ class AppLogicManager {
     }
 
     startIntro() {
-        this.introStartTime = config.time;
+        gamestate.introStartTime = config.time;
         this.playingIntro = true;
     }
 
@@ -179,28 +185,31 @@ class AppLogicManager {
         this.playingIntro = false;
         setTimeout(() => {
             gamestate.started = true;
+            gamestate.gameStartTime = config.time;
             document.dispatchEvent(startQuestEvent);
         }, 100);
     }
 
+    updateIntro() {
+        i = (config.time - gamestate.introStartTime) / config.introDuration;
+        i = Math.min(i, 1);
+        this.lights.forEach(l => {
+            l.light.intensity = (1 - i * i) * l.originalIntensity;
+        });
+        this.starfield.updateBrightness(1 - i * i);
+
+        i = i < 0.5 ? 2 * i * i : -1 + (4 - 2 * i) * i;
+        this.camera.position.lerpVectors(this.camIntroStartPos, this.camIntroEndPos, i);
+        this.camera.lookAt(this.v0);
+        this.camera.updateProjectionMatrix();
+        if (i >= 1) this.finishIntro();
+    }
+
     update(dt) {
-        if (this.playingIntro) {
-            i = (config.time - this.introStartTime) / config.introDuration;
-            i = Math.min(i, 1);
-            i = i < 0.5 ? 2 * i * i : -1 + (4 - 2 * i) * i;
-            this.camera.position.lerpVectors(this.camIntroStartPos, this.camIntroEndPos, i);
-            this.camera.lookAt(this.v0);
-            this.camera.updateProjectionMatrix();
-            if (i >= 1) this.finishIntro();
-        } else {
-            if (gamestate.doors.door_root_7 && !gamestate.pickups.suit) {
-                gamestate.lose = true;
-                this.gameover();
-            }
-            if (gamestate.doors.door_root_7 && gamestate.pickups.suit) {
-                gamestate.win = true;
-                this.gameover(true);
-            }
+        if (this.playingIntro) this.updateIntro();
+        else {
+            this.checkWinLose();
+            this.startGameFadeIn();
 
             this.doors.forEach(door => {
                 door.update(dt);
@@ -232,6 +241,32 @@ class AppLogicManager {
             }
 
             this.interactCommand = false;
+        }
+    }
+
+    checkWinLose() {
+        if (gamestate.doors.door_root_7 && !gamestate.pickups.suit) {
+            gamestate.lose = true;
+            this.gameover();
+        }
+        if (gamestate.doors.door_root_7 && gamestate.pickups.suit) {
+            gamestate.win = true;
+            this.gameover(true);
+        }
+    }
+
+    startGameFadeIn() {
+        i = (config.time - gamestate.gameStartTime) / config.lightsInDuration;
+        if (i <= config.lightsInDuration * 1.5) {
+            i = Math.min(i, 1);
+            this.lights.forEach(l => {
+                l.light.intensity = i * i * l.originalIntensity;
+            });
+            this.starfield.updateBrightness(i);
+
+            this.activeObjects.forEach(activeObj => {
+                activeObj.updateSelectionBrightness(i * i);
+            });
         }
     }
 

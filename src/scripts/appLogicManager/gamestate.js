@@ -4,6 +4,9 @@ const gamestate = {
     win: false,
     lose: false,
 
+    introStartTime: -1,
+    gameStartTime: -1,
+
     pickups: {
         suit: false,
         repairKit: false

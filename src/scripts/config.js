@@ -10,6 +10,7 @@ const config = {
 
     time: 0,
     introDuration: 2,
+    lightsInDuration: 0.8,
 
     renderer: {
         clearColor: 0x141424,
@@ -28,7 +29,7 @@ const config = {
 
     walker: {
         startPos: [-47, 8, -29],
-        startYaw: -1,
+        startYaw: -1.8,
         startPitch: 0
     },
 

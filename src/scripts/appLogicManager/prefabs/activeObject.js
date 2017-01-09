@@ -75,7 +75,6 @@ class ActiveObject {
         });
 
         mat.uniforms.diffuse.value = this.deselectedColor;
-        mat.opacity = 0.05;
         mat.uniforms.opacity.value = 0.2;
 
         mat.uniforms.time = {value: 0};
@@ -90,6 +89,11 @@ class ActiveObject {
         mesh.scale.multiplyScalar(1.03);
 
         this.highlightMesh = mesh;
+    }
+
+    updateSelectionBrightness(val) {
+        if (this.highlightMesh) this.highlightMesh.material.uniforms.opacity.value = val * 0.2;
+        if (this.outlineMesh) this.outlineMesh.material.opacity = val * 0.2;
     }
 
     update(time) {

@@ -16,7 +16,8 @@ class Starfield {
         const starfieldMaterial = new THREE.RawShaderMaterial({
             uniforms: {
                 radius: {value: 500},
-                map: {value: starfieldMap}
+                map: {value: starfieldMap},
+                brightness: {value: 1}
             },
             vertexShader: starfieldVert,
             fragmentShader: defaultFrag
@@ -24,6 +25,12 @@ class Starfield {
         const mesh = new THREE.Mesh(planeGeom, starfieldMaterial);
         scene.add(mesh);
         mesh.frustumCulled = false;
+
+        this.starfieldMaterial = starfieldMaterial;
+    }
+
+    updateBrightness(val) {
+        this.starfieldMaterial.uniforms.brightness.value = val;
     }
 
     generateStarfieldMap() {
