@@ -1,8 +1,10 @@
 import config from '../config.js';
+import gamestate from '../appLogicManager/gamestate.js';
 
 import StatsUi from './stats-ui.js';
 
 const startIntroEvent = new Event('startIntro');
+const unpauseEvent = new Event('unpause');
 
 const interactEvent = new Event('interact');
 
@@ -33,6 +35,19 @@ class AppUi {
         document.addEventListener('keydown', (e) => {
             if (e.keyCode === 69) {
                 document.dispatchEvent(interactEvent);
+            }
+        });
+
+        const continueButton = document.getElementById('continueButton');
+        const pauseRoot = document.getElementById('pauseMenuRoot');
+        continueButton.addEventListener('click', () => {
+            pauseRoot.style.display = 'none';
+            document.dispatchEvent(unpauseEvent);
+        });
+
+        document.addEventListener('pause', () => {
+            if (!gamestate.win && !gamestate.lose) {
+                pauseRoot.style.display = 'block';
             }
         });
 

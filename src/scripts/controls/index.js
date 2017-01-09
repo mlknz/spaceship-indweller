@@ -7,6 +7,7 @@ import config from '../config.js';
 import gamestate from '../appLogicManager/gamestate.js';
 import WalkerTouchControls from './walkerTouchControls.js';
 
+const pauseEvent = new Event('pause');
 let self;
 const v = {
     height: 10,
@@ -60,7 +61,7 @@ const onKeyDown = function(e) {
         v.jump = true;
         break;
     case 27: // escape
-        if (!this.orbitControls.enabled) this.disableWalker();
+        // this.disableWalker();
         break;
     default:
     }
@@ -124,7 +125,7 @@ class Controls {
             this.infoEl.style.right = '0';
             this.infoEl.innerHTML = 'Controls: touch joystick to move, touch out of joystick to look around.';
         } else {
-            this.infoEl.innerHTML = 'Movement: WASD / Space / Shift + mouse. Interact: E. Press Escape to exit.';
+            this.infoEl.innerHTML = 'Movement: WASD / Space / Shift + mouse. Interact: E. Press Escape to pause.';
         }
 
         this.walkerControls = new THREE.PointerLockControls(camera, domElement);
@@ -179,25 +180,25 @@ class Controls {
 
     disableWalker() {
         // this.resetCameraOrbit();
-
-        if (this.isDesktop) {
-            this._removeKeyboardListeners();
-            this._removePointerLock();
-            if (this.rotateOnMouseDown) {
-                this._rotateOnMouseDownDisable();
+        if (this.walkerEnabled) {
+            if (this.isDesktop) {
+                this._removeKeyboardListeners();
+                this._removePointerLock();
+                if (this.rotateOnMouseDown) {
+                    this._rotateOnMouseDownDisable();
+                }
+            } else {
+                this.walkerTouchControls.disable();
             }
-        } else {
-            this.walkerTouchControls.disable();
+
+            document.body.removeChild(this.infoEl);
+            document.exitPointerLock();
+            // this.orbitControls.enabled = true;
+            this.walkerControls.enabled = false;
+
+            this.walkerEnabled = false;
+            document.dispatchEvent(pauseEvent);
         }
-
-        document.body.removeChild(this.infoEl);
-        document.exitPointerLock();
-        // this.orbitControls.enabled = true;
-        this.walkerControls.enabled = false;
-
-        this.walkerEnabled = false;
-
-        // document.dispatchEvent(disableWalkerEvent);
     }
 
     addNavMeshes(navMeshesArr) {

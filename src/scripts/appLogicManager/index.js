@@ -7,7 +7,6 @@ import ActiveObject from './prefabs/activeObject.js';
 
 const startQuestEvent = new Event('startQuest');
 const pauseEvent = new Event('pause');
-const unpauseEvent = new Event('unpause');
 
 let i = 0;
 
@@ -107,6 +106,8 @@ class AppLogicManager {
         this.camIntroEndPos = (new THREE.Vector3()).fromArray(config.camera.cameraIntroTargetPos);
         document.addEventListener('startIntro', () => { this.startIntro(); });
         this.playingIntro = false;
+        document.addEventListener('pause', () => { this.pause(); });
+        document.addEventListener('unpause', () => { this.unpause(); });
 
         const interactInfo = document.createElement('div');
         interactInfo.className = 'interactInfo';
@@ -147,24 +148,22 @@ class AppLogicManager {
     pause() {
         if (!gamestate.paused) {
             gamestate.paused = true;
-            document.dispatchEvent(pauseEvent);
         }
     }
 
     unpause() {
         if (gamestate.paused) {
             gamestate.paused = false;
-            document.dispatchEvent(unpauseEvent);
         }
     }
 
-    gameover(win) {
-        this.pause();
+    gameover() {
+        document.dispatchEvent(pauseEvent);
 
         const gameoverDiv = document.getElementById('gameoverRoot');
 
         const gameoverTextDiv = document.getElementById('gameoverText');
-        const gameoverText = win ? 'You Win!' : 'You Lose!';
+        const gameoverText = gamestate.win ? 'YOU WIN!' : 'YOU LOSE!';
 
         gameoverTextDiv.innerHTML = gameoverText;
 
@@ -188,16 +187,18 @@ class AppLogicManager {
         if (this.playingIntro) {
             i = (config.time - this.introStartTime) / config.introDuration;
             i = Math.min(i, 1);
-            // i = i<.5 ? 2*i*i : -1+(4-2*i)*i;
+            i = i < 0.5 ? 2 * i * i : -1 + (4 - 2 * i) * i;
             this.camera.position.lerpVectors(this.camIntroStartPos, this.camIntroEndPos, i);
             this.camera.lookAt(this.v0);
             this.camera.updateProjectionMatrix();
             if (i >= 1) this.finishIntro();
         } else {
             if (gamestate.doors.door_root_7 && !gamestate.pickups.suit) {
-                this.gameover(false);
+                gamestate.lose = true;
+                this.gameover();
             }
             if (gamestate.doors.door_root_7 && gamestate.pickups.suit) {
+                gamestate.win = true;
                 this.gameover(true);
             }
 
