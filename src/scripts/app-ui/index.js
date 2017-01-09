@@ -2,7 +2,7 @@ import config from '../config.js';
 
 import StatsUi from './stats-ui.js';
 
-const startQuestEvent = new Event('startQuest');
+const startIntroEvent = new Event('startIntro');
 
 const interactEvent = new Event('interact');
 
@@ -17,7 +17,7 @@ class AppUi {
 
         startQuestButton.addEventListener('click', () => {
             newGameDiv.style.display = 'none';
-            document.dispatchEvent(startQuestEvent);
+            document.dispatchEvent(startIntroEvent);
         });
 
         const startAgainButton = document.getElementById('startAgainButton');

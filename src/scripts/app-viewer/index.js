@@ -41,7 +41,7 @@ class AppViewer {
             config.time += dt;
 
             this.controls.update(dt);
-            this.appLogicManager.update(dt, config.time);
+            this.appLogicManager.update(dt);
             this.renderer.render(this.sceneManager.scene, this.camera);
         }
     }

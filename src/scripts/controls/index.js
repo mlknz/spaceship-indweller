@@ -4,6 +4,7 @@ require('three/examples/js/controls/OrbitControls.js');
 require('./PointerLockControls.js'); // with touchmove and mac trackpad support
 
 import config from '../config.js';
+import gamestate from '../appLogicManager/gamestate.js';
 import WalkerTouchControls from './walkerTouchControls.js';
 
 let self;
@@ -138,9 +139,13 @@ class Controls {
 
         this.resetCameraOrbit();
 
+        document.addEventListener('startIntro', () => {
+            this.enableWalker(); // workaround: Pointerlock couldn't be used in setTimeout, only immediate response
+            this.walkerControls.enabled = false;
+        });
         document.addEventListener('startQuest', () => {
             this.resetWalkerPosition();
-            this.enableWalker();
+            this.walkerControls.enabled = !this.rotateOnMouseDown;
         });
         document.addEventListener('pause', () => { this.disableWalker(); });
         document.addEventListener('unpause', () => { this.enableWalker(); });
@@ -166,7 +171,7 @@ class Controls {
 
         document.body.appendChild(this.infoEl);
 
-        this.orbitControls.enabled = false;
+        // this.orbitControls.enabled = false;
         this.walkerControls.enabled = !this.rotateOnMouseDown;
 
         this.walkerEnabled = true;
@@ -230,8 +235,8 @@ class Controls {
 
     update(delta) {
         if (this.orbitControls.enabled && !this.walkerEnabled) {
-            this.orbitControls.update();
-        } else {
+            // this.orbitControls.update();
+        } else if (gamestate.started) {
             const cObj = this._controlsObject;
 
             if (!this.isDesktop) {
@@ -387,7 +392,8 @@ class Controls {
         }
     }
 
-    _pointerlockerror() {
+    _pointerlockerror(e) {
+        console.log(e);
         const element = document.body;
         element.innerHTML = 'PointerLock Error';
     }

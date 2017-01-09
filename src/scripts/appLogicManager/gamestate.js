@@ -1,5 +1,6 @@
 const gamestate = {
-    paused: false,
+    started: false, // for initial controls enabling
+    paused: false, // freezes whole loop
     win: false,
     lose: false,
 

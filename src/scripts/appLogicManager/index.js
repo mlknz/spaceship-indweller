@@ -5,6 +5,7 @@ import Door from './prefabs/door.js';
 import Starfield from './prefabs/starfield.js';
 import ActiveObject from './prefabs/activeObject.js';
 
+const startQuestEvent = new Event('startQuest');
 const pauseEvent = new Event('pause');
 const unpauseEvent = new Event('unpause');
 
@@ -26,6 +27,7 @@ class AppLogicManager {
         this.interactCommand = false;
 
         this._tV2 = new THREE.Vector2(0);
+        this.v0 = new THREE.Vector3(0, 0, 0);
         this._tArr = [];
 
         this.starfield = new Starfield(renderer, this.scene);
@@ -101,6 +103,11 @@ class AppLogicManager {
             }
         });
 
+        this.camIntroStartPos = (new THREE.Vector3()).fromArray(config.camera.cameraPos);
+        this.camIntroEndPos = (new THREE.Vector3()).fromArray(config.camera.cameraIntroTargetPos);
+        document.addEventListener('startIntro', () => { this.startIntro(); });
+        this.playingIntro = false;
+
         const interactInfo = document.createElement('div');
         interactInfo.className = 'interactInfo';
         interactInfo.innerHTML = this.controls.isDesktop ? 'Press E to interact' : 'Touch to interact';
@@ -164,45 +171,67 @@ class AppLogicManager {
         gameoverDiv.style.display = 'block';
     }
 
-    update(dt, time) {
-        if (gamestate.doors.door_root_7 && !gamestate.pickups.suit) {
-            this.gameover(false);
-        }
-        if (gamestate.doors.door_root_7 && gamestate.pickups.suit) {
-            this.gameover(true);
-        }
+    startIntro() {
+        this.introStartTime = config.time;
+        this.playingIntro = true;
+    }
 
-        this.doors.forEach(door => {
-            door.update(dt);
-        });
+    finishIntro() {
+        this.playingIntro = false;
+        setTimeout(() => {
+            gamestate.started = true;
+            document.dispatchEvent(startQuestEvent);
+        }, 100);
+    }
 
-        this.activeObjects.forEach(activeObj => {
-            activeObj.update(time);
-        });
-
-        for (i = 0; i < this.activeObjects.length; i++) {
-            this.activeObjects[i].deselectObject();
-        }
-
-        if (this.controls.currentFloorMesh && !this.controls.currentFloorMesh.name.includes('door_nav_blocker')) {
-
-            this.fromEyeRaycaster.setFromCamera(this._tV2, this.camera);
-            this._tArr = this.fromEyeRaycaster.intersectObjects(this.activeObjectsColliders);
-
-            for (i = 0; i < this._tArr.length; i++) {
-                if (this._tArr[i].object.userData.activeObject) this._tArr[i].object.userData.activeObject.selectObject();
+    update(dt) {
+        if (this.playingIntro) {
+            i = (config.time - this.introStartTime) / config.introDuration;
+            i = Math.min(i, 1);
+            // i = i<.5 ? 2*i*i : -1+(4-2*i)*i;
+            this.camera.position.lerpVectors(this.camIntroStartPos, this.camIntroEndPos, i);
+            this.camera.lookAt(this.v0);
+            this.camera.updateProjectionMatrix();
+            if (i >= 1) this.finishIntro();
+        } else {
+            if (gamestate.doors.door_root_7 && !gamestate.pickups.suit) {
+                this.gameover(false);
+            }
+            if (gamestate.doors.door_root_7 && gamestate.pickups.suit) {
+                this.gameover(true);
             }
 
+            this.doors.forEach(door => {
+                door.update(dt);
+            });
+
+            this.activeObjects.forEach(activeObj => {
+                activeObj.update(config.time);
+            });
+
+            for (i = 0; i < this.activeObjects.length; i++) {
+                this.activeObjects[i].deselectObject();
+            }
+
+            if (this.controls.currentFloorMesh && !this.controls.currentFloorMesh.name.includes('door_nav_blocker')) {
+
+                this.fromEyeRaycaster.setFromCamera(this._tV2, this.camera);
+                this._tArr = this.fromEyeRaycaster.intersectObjects(this.activeObjectsColliders);
+
+                for (i = 0; i < this._tArr.length; i++) {
+                    if (this._tArr[i].object.userData.activeObject) this._tArr[i].object.userData.activeObject.selectObject();
+                }
+
+            }
+
+            this.interactInfo.style.display = this._tArr.length ? 'block' : 'none';
+
+            for (i = 0; i < this.activeObjects.length; i++) {
+                if (this.activeObjects[i].selected && this.interactCommand) this.activeObjects[i].makeAction();
+            }
+
+            this.interactCommand = false;
         }
-
-        this.interactInfo.style.display = this._tArr.length ? 'block' : 'none';
-
-        for (i = 0; i < this.activeObjects.length; i++) {
-            if (this.activeObjects[i].selected && this.interactCommand) this.activeObjects[i].makeAction();
-        }
-
-        this.interactCommand = false;
-
     }
 
 }

@@ -9,6 +9,7 @@ const config = {
     usePVRTextures: true,
 
     time: 0,
+    introDuration: 2,
 
     renderer: {
         clearColor: 0x141424,
@@ -18,7 +19,7 @@ const config = {
 
     camera: {
         cameraPos: [-146, 86, 150],
-        cameraIntroTargetPos: [-140, 20, 0],
+        cameraIntroTargetPos: [-81, 30, -0],
         near: 1,
         far: 1400,
         walkerNear: 0.1,
