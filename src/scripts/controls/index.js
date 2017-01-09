@@ -113,24 +113,23 @@ class Controls {
         this.orbitControls.maxDistance = config.controls.maxDistance;
         this.orbitControls.rotateSpeed = config.controls.rotateSpeed;
 
+        this.orbitControls.enabled = config.isDebug;
+
         this.infoEl = document.createElement('div');
-        this.infoEl.className = 'buttonsRoot';
-        this.infoEl.style.background = 'rgba(255,255,255,0.4)';
+        this.infoEl.className = 'controlsInfo';
         if (!this.isDesktop) {
             this.infoEl.style.width = '60%';
             this.infoEl.style.height = '20%';
             this.infoEl.style.right = '0';
             this.infoEl.innerHTML = 'Controls: touch joystick to move, touch out of joystick to look around.';
         } else {
-            this.infoEl.innerHTML = 'Controls: WASD / Space / Shift + mouse. Press Escape to exit.';
+            this.infoEl.innerHTML = 'Movement: WASD / Space / Shift + mouse. Interact: E. Press Escape to exit.';
         }
 
         this.walkerControls = new THREE.PointerLockControls(camera, domElement);
         this._controlsObject = this.walkerControls.getObject();
         this._controlsObject.name = 'pointerLockObject';
         scene.add(this._controlsObject);
-
-        this.resetCameraOrbit();
 
         this.navMeshes = [];
 
@@ -139,18 +138,16 @@ class Controls {
 
         this.resetCameraOrbit();
 
-        document.addEventListener('startQuest', this.enableWalker.bind(this));
-        document.addEventListener('pause', this.disableWalker.bind(this));
-        // document.addEventListener('unpause', this.enableWalker.bind(this));
+        document.addEventListener('startQuest', () => {
+            this.resetWalkerPosition();
+            this.enableWalker();
+        });
+        document.addEventListener('pause', () => { this.disableWalker(); });
+        document.addEventListener('unpause', () => { this.enableWalker(); });
     }
 
     enableWalker() {
-        if (!this.orbitControls.enabled) return;
-        this.resetCameraWalker();
-
-        this._controlsObject.position.fromArray([-47, 8, -29]); // Binding Point
-        this._controlsObject.rotation.y = -1; // Rotates Yaw Object
-        this._controlsObject.children[0].rotation.x = 0; // Rotates Pitch Object
+        if (this.walkerEnabled) return;
 
         this.rotateOnMouseDown = false;
         if (this.isDesktop) {
@@ -171,6 +168,8 @@ class Controls {
 
         this.orbitControls.enabled = false;
         this.walkerControls.enabled = !this.rotateOnMouseDown;
+
+        this.walkerEnabled = true;
     }
 
     disableWalker() {
@@ -190,6 +189,8 @@ class Controls {
         document.exitPointerLock();
         // this.orbitControls.enabled = true;
         this.walkerControls.enabled = false;
+
+        this.walkerEnabled = false;
 
         // document.dispatchEvent(disableWalkerEvent);
     }
@@ -211,6 +212,14 @@ class Controls {
         this._controlsObject.children[0].rotation.x = 0; // Resets Pitch Object
     }
 
+    resetWalkerPosition() {
+        this.resetCameraWalker();
+
+        this._controlsObject.position.fromArray(config.walker.startPos); // Binding Point
+        this._controlsObject.rotation.y = config.walker.startYaw; // Rotates Yaw Object
+        this._controlsObject.children[0].rotation.x = config.walker.startPitch; // Rotates Pitch Object
+    }
+
     resetCameraWalker() {
         this.camera.position.set(0, 0, 0);
         this.camera.rotation.set(0, 0, 0);
@@ -220,7 +229,7 @@ class Controls {
     }
 
     update(delta) {
-        if (this.orbitControls.enabled) {
+        if (this.orbitControls.enabled && !this.walkerEnabled) {
             this.orbitControls.update();
         } else {
             const cObj = this._controlsObject;

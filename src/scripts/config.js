@@ -18,10 +18,17 @@ const config = {
 
     camera: {
         cameraPos: [-146, 86, 150],
+        cameraIntroTargetPos: [-140, 20, 0],
         near: 1,
         far: 1400,
         walkerNear: 0.1,
         walkerFar: 840
+    },
+
+    walker: {
+        startPos: [-47, 8, -29],
+        startYaw: -1,
+        startPitch: 0
     },
 
     controls: {
