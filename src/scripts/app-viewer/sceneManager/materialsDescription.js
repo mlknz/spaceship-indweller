@@ -29,6 +29,12 @@ const materialsDescription = {
         metalness: 0.2,
         roughness: 0.8
     },
+    door_instanced: {
+        map: 'door_diffuse',
+        color: 0xffffff,
+        metalness: 0.2,
+        roughness: 0.8
+    },
     space_suit: {
         map: 'space_suit_diffuse',
         color: 0xffffff

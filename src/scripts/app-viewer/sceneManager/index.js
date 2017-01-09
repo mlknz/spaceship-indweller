@@ -4,6 +4,7 @@ import sceneDescription from './sceneDescription.js';
 import materialsDescription from './materialsDescription';
 
 import MaterialDecorator from '../materialDecorator';
+import Batcher from '../batcher';
 
 const sceneReadyEvent = new Event('sceneReady');
 
@@ -15,6 +16,8 @@ class SceneManager {
 
         this.materialDecorator = new MaterialDecorator(materialsDescription);
 
+        this.batcher = new Batcher(this.scene, this.materialDecorator);
+
         document.addEventListener('assetsLoaded', this.onAssetsLoaded.bind(this));
 
         this.assetsLoader.loadAssets(sceneDescription.assets);
@@ -23,7 +26,14 @@ class SceneManager {
     onAssetsLoaded() {
         this.createSceneFromDescription(this.scene);
 
+        this.scene.updateMatrixWorld();
+
         this.materialDecorator.rewriteSingleMaterials(this.scene, this.assetsLoader.assets.textures);
+
+        this.batcher.batchSameGeomIdUndecoratedMeshes({
+            batchMeshesWithChildren: true,
+            excludeIfNameContains: ['door_left', 'door_right', 'door_controls', 'door_nav_blocker']
+        });
 
         this.hideNavigationMeshes();
 

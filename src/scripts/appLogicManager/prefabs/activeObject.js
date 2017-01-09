@@ -81,7 +81,7 @@ class ActiveObject {
         mat.uniforms.time = {value: 0};
 
         const mesh = new THREE.Mesh(geom, mat);
-        mesh.name = this.controller.name + '_outlineMesh';
+        mesh.name = this.controller.name + '_highlightMesh';
 
         this.controller.parent.add(mesh);
 
