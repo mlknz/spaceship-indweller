@@ -122,6 +122,8 @@ class ActiveObject {
             if (this.controllableObject.state === this.controllableObject.states.CLOSED) {
                 gamestate.doors[this.controllableObject.mesh.name] = true;
                 this.controllableObject.open();
+
+                this.processGatewayLogic();
             } else if (this.controllableObject.state === this.controllableObject.states.OPEN) {
                 gamestate.doors[this.controllableObject.mesh.name] = false;
                 this.controllableObject.close();
@@ -133,6 +135,26 @@ class ActiveObject {
             break;
         default:
             console.log('unhandled activeObject action');
+        }
+    }
+
+    processGatewayLogic() {
+        if (this.controllableObject.mesh.name === 'door_root_7') {
+            const toogleDoorEvent = new CustomEvent('toogleDoor', {
+                detail: {
+                    name: 'door_root_6',
+                    action: 'close'
+                }
+            });
+            document.dispatchEvent(toogleDoorEvent);
+        } else if (this.controllableObject.mesh.name === 'door_root_6') {
+            const toogleDoorEvent = new CustomEvent('toogleDoor', {
+                detail: {
+                    name: 'door_root_7',
+                    action: 'close'
+                }
+            });
+            document.dispatchEvent(toogleDoorEvent);
         }
     }
 

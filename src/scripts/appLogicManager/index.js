@@ -107,6 +107,18 @@ class AppLogicManager {
             }
         });
 
+        document.addEventListener('toogleDoor', (e) => {
+            if (e.detail && e.detail.name && e.detail.action) {
+                this.doors.forEach(door => {
+                    if (door.mesh.name === e.detail.name) {
+                        if (e.detail.action === 'close') {
+                            door.close();
+                        }
+                    }
+                });
+            }
+        });
+
         this.camIntroStartPos = (new THREE.Vector3()).fromArray(config.camera.cameraPos);
         this.camIntroEndPos = (new THREE.Vector3()).fromArray(config.camera.cameraIntroTargetPos);
         document.addEventListener('startIntro', () => { this.startIntro(); });
@@ -162,20 +174,6 @@ class AppLogicManager {
         }
     }
 
-    gameover() {
-        document.dispatchEvent(pauseEvent);
-
-        this.interactInfo.style.zIndex = '-10';
-        const gameoverDiv = document.getElementById('gameoverRoot');
-
-        const gameoverTextDiv = document.getElementById('gameoverText');
-        const gameoverText = gamestate.win ? 'YOU WIN!' : 'YOU LOSE!';
-
-        gameoverTextDiv.innerHTML = gameoverText;
-
-        gameoverDiv.style.display = 'block';
-    }
-
     startIntro() {
         gamestate.introStartTime = config.time;
         this.playingIntro = true;
@@ -188,6 +186,21 @@ class AppLogicManager {
             gamestate.gameStartTime = config.time;
             document.dispatchEvent(startQuestEvent);
         }, 100);
+    }
+
+    startGameFadeIn() {
+        i = (config.time - gamestate.gameStartTime) / config.lightsInDuration;
+        if (i <= config.lightsInDuration * 1.5) {
+            i = Math.min(i, 1);
+            this.lights.forEach(l => {
+                l.light.intensity = i * i * l.originalIntensity;
+            });
+            this.starfield.updateBrightness(i);
+
+            this.activeObjects.forEach(activeObj => {
+                activeObj.updateSelectionBrightness(i * i);
+            });
+        }
     }
 
     updateIntro() {
@@ -245,29 +258,28 @@ class AppLogicManager {
     }
 
     checkWinLose() {
-        if (gamestate.doors.door_root_7 && !gamestate.pickups.suit) {
-            gamestate.lose = true;
-            this.gameover();
-        }
-        if (gamestate.doors.door_root_7 && gamestate.pickups.suit) {
-            gamestate.win = true;
-            this.gameover(true);
-        }
+        // if (gamestate.doors.door_root_7 && !gamestate.pickups.suit) {
+        //     gamestate.lose = true;
+        //     this.gameover();
+        // }
+        // if (gamestate.doors.door_root_7 && gamestate.pickups.suit) {
+        //     gamestate.win = true;
+        //     this.gameover();
+        // }
     }
 
-    startGameFadeIn() {
-        i = (config.time - gamestate.gameStartTime) / config.lightsInDuration;
-        if (i <= config.lightsInDuration * 1.5) {
-            i = Math.min(i, 1);
-            this.lights.forEach(l => {
-                l.light.intensity = i * i * l.originalIntensity;
-            });
-            this.starfield.updateBrightness(i);
+    gameover() {
+        document.dispatchEvent(pauseEvent);
 
-            this.activeObjects.forEach(activeObj => {
-                activeObj.updateSelectionBrightness(i * i);
-            });
-        }
+        this.interactInfo.style.zIndex = '-10';
+        const gameoverDiv = document.getElementById('gameoverRoot');
+
+        const gameoverTextDiv = document.getElementById('gameoverText');
+        const gameoverText = gamestate.win ? 'YOU WIN!' : 'YOU LOSE!';
+
+        gameoverTextDiv.innerHTML = gameoverText;
+
+        gameoverDiv.style.display = 'block';
     }
 
 }
