@@ -90,6 +90,29 @@ body {
     text-align: center;
 }
 
+.buttonsRoot, .pauseMobile {
+    position: absolute;
+
+    font-size: 4vh;
+    font-weight: bold;
+
+    -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Chrome/Safari/Opera */
+   -khtml-user-select: none; /* Konqueror */
+     -moz-user-select: none; /* Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+          user-select: none; /* Non-prefixed version, currently
+                                not supported by any browser */
+}
+
+.pauseMobile {
+    left: 0;
+    top: 10%;
+    width: 20%;
+    height: 10%;
+    display: none;
+}
+
 .buttonsRoot {
     bottom: 0;
     width: 100%;
@@ -108,7 +131,7 @@ body {
     position: absolute;
 }
 
-.startAgainButton, .goToSourceButton {
+.startAgainButton, .goToSourceButton, .pauseMobileButton {
     width: 49%;
     height: 100%;
     cursor: pointer;
@@ -117,6 +140,9 @@ body {
     display: table-cell;
     vertical-align: middle;
     line-height: 100%;
+}
+.pauseMobileButton {
+    height: 100%;
 }
 
 .startAgainButton:hover, .goToSourceButton:hover{

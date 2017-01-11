@@ -123,7 +123,7 @@ class Controls {
             this.infoEl.style.width = '60%';
             this.infoEl.style.height = '20%';
             this.infoEl.style.right = '0';
-            this.infoEl.innerHTML = 'Controls: touch joystick to move, touch out of joystick to look around.';
+            this.infoEl.innerHTML = 'Touch controller to move, touch out of controller to look around.';
         } else {
             this.infoEl.innerHTML = 'Movement: WASD / Space / Shift + mouse. Interact: E. Press Escape to pause.';
         }

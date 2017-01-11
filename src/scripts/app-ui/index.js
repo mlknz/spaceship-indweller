@@ -4,6 +4,7 @@ import gamestate from '../appLogicManager/gamestate.js';
 import StatsUi from './stats-ui.js';
 
 const startIntroEvent = new Event('startIntro');
+const pauseEvent = new Event('pause');
 const unpauseEvent = new Event('unpause');
 
 const interactEvent = new Event('interact');
@@ -17,8 +18,19 @@ class AppUi {
 
         const startQuestButton = document.getElementById('startQuestButton');
 
+        const pauseMobileRoot = document.getElementById('pauseMobile');
+        const pauseMobileButton = document.getElementById('pauseMobileButton');
+
+        pauseMobileButton.addEventListener('click', () => {
+            pauseMobileRoot.style.display = 'none';
+            document.dispatchEvent(pauseEvent);
+        });
+
         startQuestButton.addEventListener('click', () => {
             newGameDiv.style.display = 'none';
+
+            if (!config.isDesktop) pauseMobileRoot.style.display = 'table';
+
             document.dispatchEvent(startIntroEvent);
         });
 
@@ -49,6 +61,10 @@ class AppUi {
             if (!gamestate.win && !gamestate.lose) {
                 pauseRoot.style.display = 'block';
             }
+        });
+
+        document.addEventListener('unpause', () => {
+            if (!config.isDesktop) pauseMobileRoot.style.display = 'table';
         });
 
     }
