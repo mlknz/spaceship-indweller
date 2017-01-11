@@ -172,7 +172,7 @@ class Controls {
 
         document.body.appendChild(this.infoEl);
 
-        // this.orbitControls.enabled = false;
+        this.orbitControls.enabled = false;
         this.walkerControls.enabled = !this.rotateOnMouseDown;
 
         this.walkerEnabled = true;

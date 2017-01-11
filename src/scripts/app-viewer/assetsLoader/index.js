@@ -1,3 +1,5 @@
+const ProgressBar = require('progressbar.js');
+
 const assetsLoadedEvent = new Event('assetsLoaded');
 
 window.THREE = window.THREE || THREE;
@@ -5,6 +7,9 @@ require('three/examples/js/loaders/DDSLoader');
 require('three/examples/js/loaders/PVRLoader');
 
 import config from '../../config.js';
+
+let totalLoaded = 0;
+let totalSize = 0;
 
 class AssetsLoader {
     constructor(scene) {
@@ -31,6 +36,9 @@ class AssetsLoader {
         let entryName;
         let loader;
         let entryList;
+
+        this.initProgressBar();
+
         assetsArr.forEach(entry => {
             switch (entry.type) {
 
@@ -72,7 +80,7 @@ class AssetsLoader {
         });
 
         Promise.all(loadPromises).then(() => {
-            document.dispatchEvent(assetsLoadedEvent);
+            this.loadingFinished();
         });
     }
 
@@ -83,13 +91,86 @@ class AssetsLoader {
                 resolve();
             },
             (xhr) => { // progress
-                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                if (config.isDebug) console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                this.updateProgressBar(xhr.loaded, xhr.total, entryName);
             },
             (e) => { // error
                 console.log('error while loading model', e);
                 reject(e);
             });
         });
+    }
+
+    initProgressBar() {
+        this.progress = -1;
+        this.assetsSizes = {};
+
+        const progressRoot = document.getElementById('progressBar');
+        this.progressbar = new ProgressBar.Line(progressRoot, {
+            // strokeWidth: 18,
+            // color: '#9c2121',
+            from: {color: '#557788'},
+            to: {color: '#224455'},
+            easing: 'easeInOut',
+            duration: 1400,
+            svgStyle: {
+                display: 'block',
+                width: '100%',
+                height: '100%',
+                boxSizing: 'border-box',
+                borderRadius: '37px'
+            },
+            text: {
+                value: 'loading',
+                style: {
+                    // Text color.
+                    // Default: same as stroke color (options.color)
+                    color: '#000',
+                    position: 'absolute',
+                    left: '50%',
+                    top: '50%',
+                    padding: 0,
+                    margin: 0,
+                    fontWeight: 'bold',
+                    fontSize: '6vh',
+                    // You can specify styles which will be browser prefixed
+                    transform: {
+                        prefix: true,
+                        value: 'translate(-50%, -50%)'
+                    }
+                }
+            },
+            step: (state, bar) => {
+                bar.path.setAttribute('stroke', state.color);
+            }
+        });
+    }
+
+    loadingFinished() {
+        const loadingScreenDiv = document.getElementById('loadingScreen');
+        loadingScreenDiv.style.display = 'none';
+        document.dispatchEvent(assetsLoadedEvent);
+    }
+
+    updateProgressBar(cur, total, entryName) {
+        if (!this.assetsSizes[entryName] && !isNaN(total) && total > 0) {
+            this.assetsSizes[entryName] = {};
+            this.assetsSizes[entryName].loaded = cur;
+            this.assetsSizes[entryName].size = total;
+        }
+        if (this.assetsSizes[entryName] && !isNaN(total) && !isNaN(cur)) {
+            totalLoaded = 0;
+            totalSize = 0;
+            this.assetsSizes[entryName].loaded = cur;
+            for (const key in this.assetsSizes) {
+                if (this.assetsSizes.hasOwnProperty(key)) {
+                    totalLoaded += this.assetsSizes[key].loaded;
+                    totalSize += this.assetsSizes[key].size;
+                }
+            }
+            this.progress = Math.max(totalLoaded / totalSize, this.progress);
+            this.progressbar.set(this.progress);
+        }
     }
 
 }
