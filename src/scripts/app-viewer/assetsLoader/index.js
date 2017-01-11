@@ -148,7 +148,11 @@ class AssetsLoader {
 
     loadingFinished() {
         const loadingScreenDiv = document.getElementById('loadingScreen');
-        loadingScreenDiv.style.display = 'none';
+        loadingScreenDiv.className = 'loadingScreen-hidden';
+        setTimeout(() => {
+            loadingScreenDiv.style.display = 'none';
+        }, 700);
+
         document.dispatchEvent(assetsLoadedEvent);
     }
 
