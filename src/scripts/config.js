@@ -44,7 +44,7 @@ const config = {
         doors: {
             openingTime: 1.2
         },
-        gatewayControlsChangeDecay: 1300
+        gatewayControlsChangeDecay: 1400
     }
 };
 

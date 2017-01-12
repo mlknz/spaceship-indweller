@@ -13,7 +13,7 @@ const gamestate = {
     },
 
     inSpace: false,
-    doors: {}
+    doorsOpen: {}
 };
 
 export default gamestate;

@@ -1,3 +1,5 @@
+import gamestate from '../gamestate.js';
+
 const states = {
     OPEN: 0,
     CLOSED: 1,
@@ -72,6 +74,8 @@ class Door {
     close() {
         if (this.state !== states.OPEN) return;
 
+        gamestate.doorsOpen[this.mesh.name] = false;
+
         this.state = states.CLOSING;
         this.progress = 1;
 
@@ -83,6 +87,7 @@ class Door {
         if (this.state === states.OPENING) {
             if (this.progress === 1) {
                 this.state = states.OPEN;
+                gamestate.doorsOpen[this.mesh.name] = true;
                 this.underDoorNavMesh.position.z = this.originalNavMeshZ;
             } else {
                 this.progress += dt / this.openingTime;

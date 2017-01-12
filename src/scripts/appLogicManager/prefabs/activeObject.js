@@ -121,13 +121,15 @@ class ActiveObject {
         switch (this.type) {
         case 'door':
             if (this.controllableObject.state === this.controllableObject.states.CLOSED) {
-                gamestate.doors[this.controllableObject.mesh.name] = true;
-                this.controllableObject.open();
 
+                this.controllableObject.open();
                 this.openDoorGatewayLogic();
+
             } else if (this.controllableObject.state === this.controllableObject.states.OPEN) {
-                gamestate.doors[this.controllableObject.mesh.name] = false;
+
                 this.controllableObject.close();
+                this.closeDoorGatewayLogic();
+
             }
             break;
         case 'suit':
@@ -151,7 +153,7 @@ class ActiveObject {
             document.dispatchEvent(toogleDoorEvent);
 
             setTimeout(() => {
-                gamestate.inSpace = true;
+                if (gamestate.doorsOpen.door_root_7) gamestate.inSpace = true;
             }, config.appLogic.gatewayControlsChangeDecay);
 
         } else if (this.controllableObject.mesh.name === 'door_root_6') {
@@ -166,6 +168,12 @@ class ActiveObject {
 
             gamestate.inSpace = false;
 
+        }
+    }
+
+    closeDoorGatewayLogic() {
+        if (this.controllableObject.mesh.name === 'door_root_7') {
+            gamestate.inSpace = false;
         }
     }
 
