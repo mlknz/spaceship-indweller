@@ -127,10 +127,8 @@ class AppLogicManager {
         document.addEventListener('pause', () => { this.pause(); });
         document.addEventListener('unpause', () => { this.unpause(); });
 
-        const interactInfo = document.createElement('div');
-        interactInfo.className = 'interactInfo';
+        const interactInfo = document.getElementById('interactInfo');
         interactInfo.innerHTML = this.controls.isDesktop ? 'Press E to interact' : 'Touch to interact';
-        document.body.appendChild(interactInfo);
         this.interactInfo = interactInfo;
     }
 
@@ -270,6 +268,9 @@ class AppLogicManager {
     }
 
     gameover() {
+        const controlPanelRoot = document.getElementById('controlPanelRoot');
+        controlPanelRoot.style.display = 'none';
+
         document.dispatchEvent(pauseEvent);
 
         this.interactInfo.style.zIndex = '-10';

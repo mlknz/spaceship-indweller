@@ -1,6 +1,9 @@
 import config from '../../config.js';
 import gamestate from '../gamestate.js';
 
+const pauseEvent = new Event('pause');
+const activateControlPanelEvent = new Event('activateControlPanel');
+
 import defaultVert from '../../app-viewer/materialDecorator/shaders/default.vert';
 import activeObjectSelectionFrag from '../../app-viewer/materialDecorator/shaders/activeObjectSelection.frag';
 
@@ -135,8 +138,13 @@ class ActiveObject {
 
             }
             break;
+        case 'controlPanel':
+            gamestate.controlPanelActive = true;
+            document.dispatchEvent(pauseEvent);
+            document.dispatchEvent(activateControlPanelEvent);
+            break;
         case 'outerPipeBroken':
-            if (gamestate.electricityEnabled) {
+            if (gamestate.engineEnabled) {
                 this.popupMessage('Voltage is too high to operate.');
             } else {
                 if (!gamestate.pickups.repairKit) {

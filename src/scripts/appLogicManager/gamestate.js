@@ -7,12 +7,14 @@ const gamestate = {
     introStartTime: -1,
     gameStartTime: -1,
 
+    controlPanelActive: false,
+
     pickups: {
         suit: false,
         repairKit: false
     },
 
-    electricityEnabled: false,
+    engineEnabled: true,
     pipeRepaired: false,
 
     inSpace: false,

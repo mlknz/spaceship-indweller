@@ -50,6 +50,8 @@ class AppUi {
             }
         });
 
+        this.initControlPanelUI();
+
         const continueButton = document.getElementById('continueButton');
         const pauseRoot = document.getElementById('pauseMenuRoot');
         continueButton.addEventListener('click', () => {
@@ -57,8 +59,10 @@ class AppUi {
             document.dispatchEvent(unpauseEvent);
         });
 
+        const interactInfo = document.getElementById('interactInfo');
         document.addEventListener('pause', () => {
-            if (!gamestate.win && !gamestate.lose) {
+            interactInfo.style.display = 'none';
+            if (!gamestate.win && !gamestate.lose && !gamestate.controlPanelActive) {
                 pauseRoot.style.display = 'block';
             }
         });
@@ -69,8 +73,55 @@ class AppUi {
 
     }
 
+    initControlPanelUI() {
+        const controlPanelRoot = document.getElementById('controlPanelRoot');
+
+        const controlPanelUnpause = function() {
+            controlPanelRoot.style.display = 'none';
+            gamestate.controlPanelActive = false;
+            document.dispatchEvent(unpauseEvent);
+        };
+
+        document.addEventListener('activateControlPanel', () => {
+            controlPanelRoot.style.display = 'block';
+        });
+
+        const turnOnEngineButton = document.getElementById('controlPanelButton1');
+        turnOnEngineButton.addEventListener('click', () => {
+            if (!gamestate.engineEnabled) {
+                gamestate.engineEnabled = true;
+                controlPanelUnpause();
+                this.popupMessage('Engine power on!');
+            }
+        });
+
+        const turnOffEngineButton = document.getElementById('controlPanelButton2');
+        turnOffEngineButton.addEventListener('click', () => {
+            gamestate.engineEnabled = false;
+            controlPanelUnpause();
+            this.popupMessage('Engine is now de-energized!');
+        });
+
+        const leavePanelButton = document.getElementById('controlPanelButton3');
+        leavePanelButton.addEventListener('click', () => {
+            controlPanelUnpause();
+        });
+    }
+
     gotoSource() {
         window.open(config.repoUrl, '_blank');
+    }
+
+    popupMessage(msg) {
+        const disposeInfo = document.createElement('div');
+        disposeInfo.className = 'disposeInfo';
+        disposeInfo.innerHTML = msg;
+        disposeInfo.style.display = 'block';
+        document.body.appendChild(disposeInfo);
+
+        setTimeout(() => {
+            disposeInfo.className = 'disposeInfoHidden';
+        }, 1000);
     }
 
     update() {

@@ -131,7 +131,7 @@ body {
     position: absolute;
 }
 
-.startAgainButton, .goToSourceButton, .pauseMobileButton {
+.startAgainButton, .goToSourceButton, .pauseMobileButton, .controlPanelButton {
     width: 49%;
     height: 100%;
     cursor: pointer;
@@ -144,8 +144,15 @@ body {
 .pauseMobileButton {
     height: 100%;
 }
+.controlPanelButton {
+    display: block;
+    height: 25%;
+    width: 70%;
+    margin-left: 15%;
+    margin-top: 3%;
+}
 
-.startAgainButton:hover, .goToSourceButton:hover{
+.startAgainButton:hover, .goToSourceButton:hover, .controlPanelButton:hover{
     background: #aa8888;
 }
 .dummy {
