@@ -16,6 +16,9 @@ class ActiveObject {
         case 'repairKit':
             this.disposeMessage = 'You picked up Repair Kit';
             break;
+        case 'outerPipeBroken':
+            this.disposeMessage = 'You successfully repaired Broken Pipe!';
+            break;
         default:
             this.disposeMessage = 'Default activeObject disposeMessage';
         }
@@ -132,7 +135,19 @@ class ActiveObject {
 
             }
             break;
-        case 'suit':
+        case 'outerPipeBroken':
+            if (gamestate.electricityEnabled) {
+                this.popupMessage('Voltage is too high to operate.');
+            } else {
+                if (!gamestate.pickups.repairKit) {
+                    this.popupMessage('Couldn\'t repair it with bare hands');
+                } else {
+                    this.controllableObject.visible = true;
+                    this.dispose();
+                }
+            }
+            break;
+        case 'suit': // pickups
         case 'repairKit':
             this.dispose();
             break;
@@ -198,11 +213,16 @@ class ActiveObject {
         this.controller = null;
         this.controllableObject = null;
 
+        this.popupMessage(this.disposeMessage);
+    }
+
+    popupMessage(msg) {
         const disposeInfo = document.createElement('div');
         disposeInfo.className = 'disposeInfo';
-        disposeInfo.innerHTML = this.disposeMessage;
+        disposeInfo.innerHTML = msg;
         disposeInfo.style.display = 'block';
         document.body.appendChild(disposeInfo);
+
         setTimeout(() => {
             disposeInfo.className = 'disposeInfoHidden';
         }, 1000);

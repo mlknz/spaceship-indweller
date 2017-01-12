@@ -84,6 +84,7 @@ class AppLogicManager {
         this.outerPipeBroken = new ActiveObject({
             type: 'outerPipeBroken',
             controllerMesh: this.outerPipeBrokenMesh,
+            object: this.outerPipeRepairedMesh,
             activeObjectsColliders: this.activeObjectsColliders,
             outline: true, highlight: true
         });

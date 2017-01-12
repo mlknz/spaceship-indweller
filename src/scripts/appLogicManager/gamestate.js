@@ -12,6 +12,9 @@ const gamestate = {
         repairKit: false
     },
 
+    electricityEnabled: false,
+    pipeRepaired: false,
+
     inSpace: false,
     doorsOpen: {}
 };
