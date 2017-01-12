@@ -29,10 +29,12 @@ const v = {
     velocity: new THREE.Vector3(0, 0, 0),
     raycaster: new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 20),
     walkingSpeed: 200,
+    spaceSpeed: 70,
     jumpStrength: 17,
     gravity: 50
 };
 
+// walker controls local vars
 const tA = new THREE.Vector3();
 const tB = new THREE.Vector3();
 const tC = new THREE.Vector3();
@@ -40,6 +42,11 @@ const tC = new THREE.Vector3();
 let isOnObject, prevPos, couldMoveThere;
 let raycastedObj;
 let intersections = [];
+
+// space controls local vars
+const forward = new THREE.Vector3();
+const right = new THREE.Vector3();
+const rotation = new THREE.Euler(0, 0, 0, 'YXZ');
 
 const onKeyDown = function(e) {
     switch (e.keyCode) {
@@ -254,7 +261,8 @@ class Controls {
                 this.walkerTouchControls.applyInertia();
             }
 
-            this.walkerControlsUpdate(delta);
+            if (!gamestate.inSpace) this.walkerControlsUpdate(delta);
+            else this.spaceControlsUpdate(delta);
         }
     }
 
@@ -269,8 +277,7 @@ class Controls {
 
         v.velocity.x -= v.velocity.x * 10.0 * delta;
         v.velocity.z -= v.velocity.z * 10.0 * delta;
-        if (!gamestate.inSpace) v.velocity.y -= v.gravity * delta;
-        else v.velocity.y -= v.velocity.y * 10.0 * delta;
+        v.velocity.y -= v.gravity * delta;
 
         if (v.moveForward) v.velocity.z -= v.walkingSpeed * v.speedModifier * v.moveForwardBackMultiplier * delta;
         if (v.moveBackward) v.velocity.z += v.walkingSpeed * v.speedModifier * v.moveForwardBackMultiplier * delta;
@@ -346,6 +353,48 @@ class Controls {
             intersections = v.raycaster.intersectObjects(this.navMeshes, false);
             if (intersections.length < 1) this.cObj.position.copy(prevPos);
         }
+    }
+
+    spaceControlsUpdate(delta) {
+        v.velocity.x -= v.velocity.x * 1.5 * delta;
+        v.velocity.y -= v.velocity.y * 1.5 * delta;
+        v.velocity.z -= v.velocity.z * 1.5 * delta;
+
+        this.walkerControls.getDirection(forward);
+
+        forward.set(0, 0, -1);
+        right.set(1, 0, 0);
+        rotation.set(this.cObj.children[0].rotation.x, this.cObj.rotation.y, 0);
+
+        forward.applyEuler(rotation);
+        right.applyEuler(rotation);
+
+        if (v.moveForward) {
+            v.velocity.x += forward.x * v.spaceSpeed * delta;
+            v.velocity.y += forward.y * v.spaceSpeed * delta;
+            v.velocity.z += forward.z * v.spaceSpeed * delta;
+        } else if (v.moveBackward) {
+            v.velocity.x -= forward.x * v.spaceSpeed * delta;
+            v.velocity.y -= forward.y * v.spaceSpeed * delta;
+            v.velocity.z -= forward.z * v.spaceSpeed * delta;
+        }
+
+        if (v.moveRight) {
+            v.velocity.x += right.x * v.spaceSpeed * delta;
+            v.velocity.y += right.y * v.spaceSpeed * delta;
+            v.velocity.z += right.z * v.spaceSpeed * delta;
+        } else if (v.moveLeft) {
+            v.velocity.x -= right.x * v.spaceSpeed * delta;
+            v.velocity.y -= right.y * v.spaceSpeed * delta;
+            v.velocity.z -= right.z * v.spaceSpeed * delta;
+        }
+
+        // this.cObj.translateX(v.velocity.x * delta); // why this approach works incorrect?
+        // this.cObj.translateY(v.velocity.y * delta);
+        // this.cObj.translateZ(v.velocity.z * delta);
+        this.cObj.position.x += v.velocity.x * delta;
+        this.cObj.position.y += v.velocity.y * delta;
+        this.cObj.position.z += v.velocity.z * delta;
     }
 
     _linesIntersectsXZ(A, B, C, D) {
