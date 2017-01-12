@@ -9,6 +9,7 @@ import WalkerTouchControls from './walkerTouchControls.js';
 
 const pauseEvent = new Event('pause');
 let self;
+
 const v = {
     height: 10,
     moveForward: false,
@@ -35,6 +36,10 @@ const v = {
 const tA = new THREE.Vector3();
 const tB = new THREE.Vector3();
 const tC = new THREE.Vector3();
+
+let isOnObject, prevPos, couldMoveThere;
+let raycastedObj;
+let intersections = [];
 
 const onKeyDown = function(e) {
     switch (e.keyCode) {
@@ -129,9 +134,9 @@ class Controls {
         }
 
         this.walkerControls = new THREE.PointerLockControls(camera, domElement);
-        this._controlsObject = this.walkerControls.getObject();
-        this._controlsObject.name = 'pointerLockObject';
-        scene.add(this._controlsObject);
+        this.cObj = this.walkerControls.getObject();
+        this.cObj.name = 'pointerLockObject';
+        scene.add(this.cObj);
 
         this.navMeshes = [];
 
@@ -213,17 +218,17 @@ class Controls {
         this.camera.far = config.camera.far;
         this.camera.updateProjectionMatrix();
 
-        this._controlsObject.position.set(0, 0, 0); // Resets Binding Point offset
-        this._controlsObject.rotation.y = 0; // Resets Yaw Object
-        this._controlsObject.children[0].rotation.x = 0; // Resets Pitch Object
+        this.cObj.position.set(0, 0, 0); // Resets Binding Point offset
+        this.cObj.rotation.y = 0; // Resets Yaw Object
+        this.cObj.children[0].rotation.x = 0; // Resets Pitch Object
     }
 
     resetWalkerPosition() {
         this.resetCameraWalker();
 
-        this._controlsObject.position.fromArray(config.walker.startPos); // Binding Point
-        this._controlsObject.rotation.y = config.walker.startYaw; // Rotates Yaw Object
-        this._controlsObject.children[0].rotation.x = config.walker.startPitch; // Rotates Pitch Object
+        this.cObj.position.fromArray(config.walker.startPos); // Binding Point
+        this.cObj.rotation.y = config.walker.startYaw; // Rotates Yaw Object
+        this.cObj.children[0].rotation.x = config.walker.startPitch; // Rotates Pitch Object
     }
 
     resetCameraWalker() {
@@ -238,107 +243,108 @@ class Controls {
         if (this.orbitControls.enabled && !this.walkerEnabled) {
             // this.orbitControls.update();
         } else if (gamestate.started) {
-            const cObj = this._controlsObject;
 
             if (!this.isDesktop) {
-                cObj.rotation.y -= v.mobileLookLeftRight * v.mobileRotateHorizontalMult * delta;
-                cObj.children[0].rotation.x += v.mobileLookUpDown * v.mobileRotateVerticalMult * delta;
-                cObj.children[0].rotation.x = Math.min(Math.max(
-                    cObj.children[0].rotation.x, -Math.PI / 2
+                this.cObj.rotation.y -= v.mobileLookLeftRight * v.mobileRotateHorizontalMult * delta;
+                this.cObj.children[0].rotation.x += v.mobileLookUpDown * v.mobileRotateVerticalMult * delta;
+                this.cObj.children[0].rotation.x = Math.min(Math.max(
+                    this.cObj.children[0].rotation.x, -Math.PI / 2
                 ), Math.PI / 2);
 
                 this.walkerTouchControls.applyInertia();
             }
 
-            let raycastedObj;
+            this.walkerControlsUpdate(delta);
+        }
+    }
 
-            v.raycaster.ray.origin.copy(cObj.position);
+    walkerControlsUpdate(delta) {
+        v.raycaster.ray.origin.copy(this.cObj.position);
 
-            let intersections = [];
-            intersections = v.raycaster.intersectObjects(this.navMeshes, false);
+        intersections = v.raycaster.intersectObjects(this.navMeshes, false);
 
-            const isOnObject = intersections.length > 0;
+        isOnObject = intersections.length > 0;
 
-            if (isOnObject) this.currentFloorMesh = intersections[0].object;
+        if (isOnObject) this.currentFloorMesh = intersections[0].object;
 
-            v.velocity.x -= v.velocity.x * 10.0 * delta;
-            v.velocity.z -= v.velocity.z * 10.0 * delta;
-            v.velocity.y -= v.gravity * delta;
+        v.velocity.x -= v.velocity.x * 10.0 * delta;
+        v.velocity.z -= v.velocity.z * 10.0 * delta;
+        if (!gamestate.inSpace) v.velocity.y -= v.gravity * delta;
+        else v.velocity.y -= v.velocity.y * 10.0 * delta;
 
-            if (v.moveForward) v.velocity.z -= v.walkingSpeed * v.speedModifier * v.moveForwardBackMultiplier * delta;
-            if (v.moveBackward) v.velocity.z += v.walkingSpeed * v.speedModifier * v.moveForwardBackMultiplier * delta;
-            if (v.moveLeft) v.velocity.x -= v.walkingSpeed * v.speedModifier * v.moveLeftRightMultiplier * delta;
-            if (v.moveRight) v.velocity.x += v.walkingSpeed * v.speedModifier * v.moveLeftRightMultiplier * delta;
-            if (v.jump && !v.isJumping) {
-                v.velocity.y = v.jumpStrength;
-                v.isJumping = true;
+        if (v.moveForward) v.velocity.z -= v.walkingSpeed * v.speedModifier * v.moveForwardBackMultiplier * delta;
+        if (v.moveBackward) v.velocity.z += v.walkingSpeed * v.speedModifier * v.moveForwardBackMultiplier * delta;
+        if (v.moveLeft) v.velocity.x -= v.walkingSpeed * v.speedModifier * v.moveLeftRightMultiplier * delta;
+        if (v.moveRight) v.velocity.x += v.walkingSpeed * v.speedModifier * v.moveLeftRightMultiplier * delta;
+        if (v.jump && !v.isJumping && !gamestate.inSpace) {
+            v.velocity.y = v.jumpStrength;
+            v.isJumping = true;
+        }
+
+        if (isOnObject) {
+            raycastedObj = intersections[0];
+            if (raycastedObj.distance + v.velocity.y * delta <= v.height) {
+                this.cObj.position.y = intersections[0].point.y + v.height;
+                v.velocity.y = 0;
+                v.isJumping = false;
             }
+        }
 
-            if (isOnObject) {
-                raycastedObj = intersections[0];
-                if (raycastedObj.distance + v.velocity.y * delta <= v.height) {
-                    cObj.position.y = intersections[0].point.y + v.height;
-                    v.velocity.y = 0;
-                    v.isJumping = false;
+        this.cObj.translateY(v.velocity.y * delta);
+
+        prevPos = this.cObj.position.clone();
+        this.cObj.translateX(v.velocity.x * delta);
+        this.cObj.translateZ(v.velocity.z * delta);
+
+        v.raycaster.ray.origin.copy(this.cObj.position);
+        intersections = [];
+        intersections = v.raycaster.intersectObjects(this.navMeshes, false);
+
+        couldMoveThere = intersections.length > 0;
+
+        if (isOnObject && couldMoveThere) this.currentFloorMesh = intersections[0].object;
+
+        if (isOnObject && !couldMoveThere) {
+            const newP = this.cObj.position.clone();
+
+            const posArr = raycastedObj.object.geometry.attributes.position.array;
+            tA.fromArray(posArr, raycastedObj.face.a * 3).applyMatrix4(raycastedObj.object.matrixWorld);
+            tB.fromArray(posArr, raycastedObj.face.b * 3).applyMatrix4(raycastedObj.object.matrixWorld);
+            tC.fromArray(posArr, raycastedObj.face.c * 3).applyMatrix4(raycastedObj.object.matrixWorld);
+
+            const triCenter = new THREE.Vector3(0).add(tA).add(tB).add(tC).divideScalar(3);
+            let intersection = this._linesIntersectsXZ(tA, tB, prevPos, newP);
+            if (!intersection.intersect) {
+                intersection = this._linesIntersectsXZ(tB, tC, prevPos, newP);
+                if (!intersection.intersect) {
+                    intersection = this._linesIntersectsXZ(tA, tC, prevPos, newP);
                 }
             }
 
-            cObj.translateY(v.velocity.y * delta);
+            if (intersection.intersect) {
+                const A = intersection.A;
+                const B = intersection.B;
 
-            const prevPos = cObj.position.clone();
-            cObj.translateX(v.velocity.x * delta);
-            cObj.translateZ(v.velocity.z * delta);
+                const a = new THREE.Vector3().subVectors(B, A);
 
-            v.raycaster.ray.origin.copy(cObj.position);
+                const proj = new THREE.Vector3().subVectors(this.cObj.position, A).projectOnVector(a);
+
+                proj.add(A);
+
+                proj.add(new THREE.Vector3().subVectors(triCenter, proj).divideScalar(1000));
+
+                proj.y = prevPos.y;
+
+                this.cObj.position.copy(proj);
+            } else {
+                this.cObj.position.copy(prevPos);
+            }
+
+            // TODO: should work without it (but it doesn't)
+            v.raycaster.ray.origin.copy(this.cObj.position);
             intersections = [];
             intersections = v.raycaster.intersectObjects(this.navMeshes, false);
-
-            const couldMoveThere = intersections.length > 0;
-
-            if (isOnObject && couldMoveThere) this.currentFloorMesh = intersections[0].object;
-
-            if (isOnObject && !couldMoveThere) {
-                const newP = cObj.position.clone();
-
-                const posArr = raycastedObj.object.geometry.attributes.position.array;
-                tA.fromArray(posArr, raycastedObj.face.a * 3).applyMatrix4(raycastedObj.object.matrixWorld);
-                tB.fromArray(posArr, raycastedObj.face.b * 3).applyMatrix4(raycastedObj.object.matrixWorld);
-                tC.fromArray(posArr, raycastedObj.face.c * 3).applyMatrix4(raycastedObj.object.matrixWorld);
-
-                const triCenter = new THREE.Vector3(0).add(tA).add(tB).add(tC).divideScalar(3);
-                let intersection = this._linesIntersectsXZ(tA, tB, prevPos, newP);
-                if (!intersection.intersect) {
-                    intersection = this._linesIntersectsXZ(tB, tC, prevPos, newP);
-                    if (!intersection.intersect) {
-                        intersection = this._linesIntersectsXZ(tA, tC, prevPos, newP);
-                    }
-                }
-
-                if (intersection.intersect) {
-                    const A = intersection.A;
-                    const B = intersection.B;
-
-                    const a = new THREE.Vector3().subVectors(B, A);
-
-                    const proj = new THREE.Vector3().subVectors(cObj.position, A).projectOnVector(a);
-
-                    proj.add(A);
-
-                    proj.add(new THREE.Vector3().subVectors(triCenter, proj).divideScalar(1000));
-
-                    proj.y = prevPos.y;
-
-                    cObj.position.copy(proj);
-                } else {
-                    cObj.position.copy(prevPos);
-                }
-
-                // TODO: should work without it (but it doesn't)
-                v.raycaster.ray.origin.copy(cObj.position);
-                intersections = [];
-                intersections = v.raycaster.intersectObjects(this.navMeshes, false);
-                if (intersections.length < 1) cObj.position.copy(prevPos);
-            }
+            if (intersections.length < 1) this.cObj.position.copy(prevPos);
         }
     }
 

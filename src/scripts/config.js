@@ -43,7 +43,8 @@ const config = {
     appLogic: {
         doors: {
             openingTime: 1.2
-        }
+        },
+        gatewayControlsChangeDecay: 1300
     }
 };
 

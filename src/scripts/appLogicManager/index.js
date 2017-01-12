@@ -258,11 +258,11 @@ class AppLogicManager {
     }
 
     checkWinLose() {
-        // if (gamestate.doors.door_root_7 && !gamestate.pickups.suit) {
+        // if (gamestate.inSpace && !gamestate.pickups.suit) {
         //     gamestate.lose = true;
         //     this.gameover();
         // }
-        // if (gamestate.doors.door_root_7 && gamestate.pickups.suit) {
+        // if (gamestate.inSpace && gamestate.pickups.suit) {
         //     gamestate.win = true;
         //     this.gameover();
         // }

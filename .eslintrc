@@ -23,6 +23,7 @@
     "space-before-function-paren": [2, "never"],
     "no-param-reassign": [2, {"props": false}],
     "arrow-body-style": 0,
+    "one-var": 0,
     "prefer-template": 0,
     "quote-props": 0,
     "no-confusing-arrow": 0

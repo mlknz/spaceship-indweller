@@ -12,7 +12,7 @@ const gamestate = {
         repairKit: false
     },
 
-    gravity: true,
+    inSpace: false,
     doors: {}
 };
 

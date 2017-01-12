@@ -1,3 +1,4 @@
+import config from '../../config.js';
 import gamestate from '../gamestate.js';
 
 import defaultVert from '../../app-viewer/materialDecorator/shaders/default.vert';
@@ -123,7 +124,7 @@ class ActiveObject {
                 gamestate.doors[this.controllableObject.mesh.name] = true;
                 this.controllableObject.open();
 
-                this.processGatewayLogic();
+                this.openDoorGatewayLogic();
             } else if (this.controllableObject.state === this.controllableObject.states.OPEN) {
                 gamestate.doors[this.controllableObject.mesh.name] = false;
                 this.controllableObject.close();
@@ -138,8 +139,9 @@ class ActiveObject {
         }
     }
 
-    processGatewayLogic() {
+    openDoorGatewayLogic() {
         if (this.controllableObject.mesh.name === 'door_root_7') {
+
             const toogleDoorEvent = new CustomEvent('toogleDoor', {
                 detail: {
                     name: 'door_root_6',
@@ -147,7 +149,13 @@ class ActiveObject {
                 }
             });
             document.dispatchEvent(toogleDoorEvent);
+
+            setTimeout(() => {
+                gamestate.inSpace = true;
+            }, config.appLogic.gatewayControlsChangeDecay);
+
         } else if (this.controllableObject.mesh.name === 'door_root_6') {
+
             const toogleDoorEvent = new CustomEvent('toogleDoor', {
                 detail: {
                     name: 'door_root_7',
@@ -155,6 +163,9 @@ class ActiveObject {
                 }
             });
             document.dispatchEvent(toogleDoorEvent);
+
+            gamestate.inSpace = false;
+
         }
     }
 
