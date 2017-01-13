@@ -164,6 +164,7 @@ class ActiveObject {
                     this.popupMessage('Couldn\'t repair it with bare hands');
                 } else {
                     this.controllableObject.visible = true;
+                    gamestate.pipeRepaired = true;
                     this.dispose();
                 }
             }

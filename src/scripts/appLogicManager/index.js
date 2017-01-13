@@ -269,14 +269,21 @@ class AppLogicManager {
     }
 
     checkWinLose() {
-        // if (gamestate.inSpace && !gamestate.pickups.suit) {
-        //     gamestate.lose = true;
-        //     this.gameover();
-        // }
-        // if (gamestate.inSpace && gamestate.pickups.suit) {
-        //     gamestate.win = true;
-        //     this.gameover();
-        // }
+        if (gamestate.inSpace && !gamestate.pickups.suit) {
+            setTimeout(() => {
+                gamestate.lose = true;
+                gamestate.gameoverMessage = 'You die in space as oxygen leaves the cell!';
+                this.gameover();
+            }, 1000);
+        }
+
+        if (gamestate.engineEnabled && gamestate.pipeRepaired) {
+            setTimeout(() => {
+                gamestate.win = true;
+                gamestate.gameoverMessage = 'Engine works as expected!' + '<br />' + ' Good job!';
+                this.gameover();
+            }, 1500);
+        }
     }
 
     gameover() {
@@ -289,7 +296,7 @@ class AppLogicManager {
         const gameoverDiv = document.getElementById('gameoverRoot');
 
         const gameoverTextDiv = document.getElementById('gameoverText');
-        const gameoverText = gamestate.win ? 'YOU WIN!' : 'YOU LOSE!';
+        const gameoverText = gamestate.gameoverMessage;
 
         gameoverTextDiv.innerHTML = gameoverText;
 
