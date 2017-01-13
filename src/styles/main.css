@@ -1,5 +1,6 @@
 body {
     background: red;
+    height: 100%;
     margin:0;
 }
 
@@ -163,7 +164,7 @@ body {
     height: 25%;
     width: 70%;
     margin-left: 15%;
-    margin-top: 3%;
+    margin-top: 3vh;
 
     box-sizing: border-box;
     border-radius: 12px;
