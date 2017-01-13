@@ -9,4 +9,4 @@ First person quest game with three.js.
 2. Run "npm install" in project root directory.
 4. Run "gulp watch" to launch dev server.
 5. Look in terminal what port is used and navigate to http://localhost:${port} (default is http://localhost:9000).
-6. To update build run gulp build.
+6. To update build run "gulp build".
