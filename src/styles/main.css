@@ -44,32 +44,46 @@ body {
     left: 35%;
 }
 
-.disposeInfo, .disposeInfoHidden {
+.disposeInfo, .disposeInfoHidden, .disposeInfoMobile, .disposeInfoHiddenMobile, .interactInfo {
     position: absolute;
     display: none;
     background-color: rgba(255, 255, 255, 0.7);
-    top: 200px;
+
+    box-sizing: border-box;
+    border-radius: 12px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 50px;
+}
+
+.disposeInfo, .disposeInfoHidden, .disposeInfoMobile, .disposeInfoHiddenMobile {
+    top: 30%;
     width: 20%;
     height: 50px;
     left: 40%;
+
     transition: top 1.0s ease-in-out, background-color 1.0s ease-in-out;
     -webkit-transition: top 1.0s ease-in-out, background-color 1.0s ease-in-out;
     -moz-transition: top 1.0s ease-in-out, background-color 1.0s ease-in-out;
     -o-transition: top 1.0s ease-in-out, background-color 1.0s ease-in-out;
 }
-.disposeInfoHidden {
-    top: -50px;
+
+.disposeInfoMobile, .disposeInfoHiddenMobile {
+    top: 20%;
+    width: 50%;
+    line-height: 25px;
+}
+.disposeInfoHidden, .disposeInfoHiddenMobile {
+    top: -10%;
     background-color: rgba(255, 255, 255, 0.0);
 }
 
 .interactInfo {
-    position: absolute;
-    display: none;
-    background-color: rgba(255, 255, 255, 0.7);
-    bottom: 20px;
+    bottom: 10%;
     width: 20%;
     height: 50px;
     left: 40%;
+    z-index: 10;
 }
 
 .menuRoot {
@@ -150,6 +164,11 @@ body {
     width: 70%;
     margin-left: 15%;
     margin-top: 3%;
+
+    box-sizing: border-box;
+    border-radius: 12px;
+    font-size: 4vh;
+    font-weight: bold;
 }
 
 .startAgainButton:hover, .goToSourceButton:hover, .controlPanelButton:hover{

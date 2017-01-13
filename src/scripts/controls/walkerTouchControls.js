@@ -84,13 +84,6 @@ class WalkerTouchControls {
             } else if (e.changedTouches[i].identifier === this.lookTouchId) {
                 this.lookTouchId = null;
 
-                const interactEvent = new CustomEvent('interact', {
-                    detail: {
-                        x: e.changedTouches[i].clientX / window.innerWidth,
-                        y: e.changedTouches[i].clientY / window.innerHeight
-                    }
-                });
-                document.dispatchEvent(interactEvent);
                 // this._mobileLookLeftRight = 0; // inertia in update loop handles this
                 // this._mobileLookUpDown = 0; // inertia in update loop handles this
             } else if (e.changedTouches[i].identifier === this.jumpTouchId) {

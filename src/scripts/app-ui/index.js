@@ -60,6 +60,12 @@ class AppUi {
         });
 
         const interactInfo = document.getElementById('interactInfo');
+        if (!config.isDesktop) {
+            interactInfo.innerHTML = 'Press to interact';
+            interactInfo.style.left = '78%';
+            interactInfo.style.bottom = '25%';
+            interactInfo.style.lineHeight = '25px';
+        }
         document.addEventListener('pause', () => {
             interactInfo.style.display = 'none';
             if (!gamestate.win && !gamestate.lose && !gamestate.controlPanelActive) {
@@ -114,14 +120,17 @@ class AppUi {
 
     popupMessage(msg) {
         const disposeInfo = document.createElement('div');
-        disposeInfo.className = 'disposeInfo';
+        disposeInfo.className = config.isDesktop ? 'disposeInfo' : 'disposeInfoMobile';
         disposeInfo.innerHTML = msg;
         disposeInfo.style.display = 'block';
         document.body.appendChild(disposeInfo);
 
         setTimeout(() => {
-            disposeInfo.className = 'disposeInfoHidden';
+            disposeInfo.className = config.isDesktop ? 'disposeInfoHidden' : 'disposeInfoHiddenMobile';
         }, 1000);
+        setTimeout(() => {
+            document.body.removeChild(disposeInfo);
+        }, 2000);
     }
 
     update() {

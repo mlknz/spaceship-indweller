@@ -104,20 +104,8 @@ class AppLogicManager {
 
         this.outerPipeRepairedMesh.visible = false;
 
-        const tV = new THREE.Vector2();
-        let tA = [];
-
-        document.addEventListener('interact', (e) => {
-            if (e.detail && e.detail.x && e.detail.y) {
-                tV.x = (e.detail.x - 0.5) * 2;
-                tV.y = (e.detail.y - 0.5) * 2;
-                this.fromEyeRaycaster.setFromCamera(tV, this.camera);
-                tA = this.fromEyeRaycaster.intersectObjects(this.activeObjectsColliders);
-                if (tA.length > 0) this.interactCommand = true;
-
-            } else {
-                this.interactCommand = true;
-            }
+        document.addEventListener('interact', () => {
+            this.interactCommand = true;
         });
 
         document.addEventListener('toogleDoor', (e) => {
@@ -139,9 +127,12 @@ class AppLogicManager {
         document.addEventListener('pause', () => { this.pause(); });
         document.addEventListener('unpause', () => { this.unpause(); });
 
-        const interactInfo = document.getElementById('interactInfo');
-        interactInfo.innerHTML = this.controls.isDesktop ? 'Press E to interact' : 'Touch to interact';
-        this.interactInfo = interactInfo;
+        this.interactInfo = document.getElementById('interactInfo');
+        if (!config.isDesktop) {
+            this.interactInfo.addEventListener('click', () => {
+                this.interactCommand = true;
+            });
+        }
     }
 
     findUsableMeshes(scene) {
