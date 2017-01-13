@@ -33,6 +33,13 @@ const config = {
         startPitch: 0
     },
 
+    spaceWalker: {
+        blockingRayMin: 2,
+        blockingRayMax: 3,
+        blockingRayLength: 10,
+        pullOutDuration: 0.7
+    },
+
     controls: {
         minDistance: 1,
         maxDistance: 500,

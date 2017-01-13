@@ -47,6 +47,11 @@ let intersections = [];
 const forward = new THREE.Vector3();
 const right = new THREE.Vector3();
 const rotation = new THREE.Euler(0, 0, 0, 'YXZ');
+const direction = new THREE.Vector3();
+
+const cameraStartTarget = new THREE.Vector3();
+const cameraReturnTarget = new THREE.Vector3();
+let pullWeight = 0;
 
 const onKeyDown = function(e) {
     switch (e.keyCode) {
@@ -146,6 +151,7 @@ class Controls {
         scene.add(this.cObj);
 
         this.navMeshes = [];
+        this.spaceNavMesh = new THREE.Object3D();
 
         this.onKeyDown = onKeyDown.bind(this);
         this.onKeyUp = onKeyUp.bind(this);
@@ -168,6 +174,7 @@ class Controls {
             gamestate.inSpace = true;
         });
         document.addEventListener('disableSpaceControls', () => {
+            v.raycaster.set(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 20);
             v.velocity.set(0, 0, 0);
             gamestate.inSpace = false;
         });
@@ -227,6 +234,10 @@ class Controls {
         else throw new Error('controls.addBlockers method expects Array as argument');
     }
 
+    addSpaceNavMesh(navmesh) {
+        this.spaceNavMesh = navmesh;
+    }
+
     resetCameraOrbit() {
         this.camera.position.fromArray(config.camera.cameraPos);
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
@@ -271,7 +282,7 @@ class Controls {
             }
 
             if (!gamestate.inSpace) this.walkerControlsUpdate(delta);
-            else this.spaceControlsUpdate(delta);
+            else this.spaceControlsUpdate(delta, config.time);
         }
     }
 
@@ -364,7 +375,18 @@ class Controls {
         }
     }
 
-    spaceControlsUpdate(delta) {
+    _linesIntersectsXZ(A, B, C, D) {
+        const s1 = new THREE.Vector2(B.x - A.x, B.z - A.z);
+        const s2 = new THREE.Vector2(D.x - C.x, D.z - C.z);
+
+        const s = (-s1.y * (A.x - C.x) + s1.x * (A.z - C.z)) / (-s2.x * s1.y + s1.x * s2.y);
+        const t = (s2.x * (A.z - C.z) - s2.y * (A.x - C.x)) / (-s2.x * s1.y + s1.x * s2.y);
+
+        const doIntersect = s >= 0 && s <= 1 && t >= 0 && t <= 1;
+        return {intersect: doIntersect, A, B};
+    }
+
+    spaceControlsUpdate(delta, time) {
         v.velocity.x -= v.velocity.x * 1.5 * delta;
         v.velocity.y -= v.velocity.y * 1.5 * delta;
         v.velocity.z -= v.velocity.z * 1.5 * delta;
@@ -376,43 +398,50 @@ class Controls {
         forward.applyEuler(rotation);
         right.applyEuler(rotation);
 
-        if (v.moveForward) {
-            v.velocity.x += forward.x * v.spaceSpeed * delta;
-            v.velocity.y += forward.y * v.spaceSpeed * delta;
-            v.velocity.z += forward.z * v.spaceSpeed * delta;
-        } else if (v.moveBackward) {
-            v.velocity.x -= forward.x * v.spaceSpeed * delta;
-            v.velocity.y -= forward.y * v.spaceSpeed * delta;
-            v.velocity.z -= forward.z * v.spaceSpeed * delta;
+        if (v.moveForward) v.velocity.add(forward.multiplyScalar(v.spaceSpeed * delta));
+        else if (v.moveBackward) v.velocity.sub(forward.multiplyScalar(v.spaceSpeed * delta));
+        if (v.moveRight) v.velocity.add(right.multiplyScalar(v.spaceSpeed * delta));
+        else if (v.moveLeft) v.velocity.sub(right.multiplyScalar(v.spaceSpeed * delta));
+
+        if (!this.returnPosState) cameraReturnTarget.copy(this.cObj.position);
+
+        if (this.pushOutAnim) {
+            v.velocity.set(0, 0, 0);
+            if (time < this._pullOutStartTime + config.spaceWalker.pullOutDuration) {
+                pullWeight = 1 - (time - this._pullOutStartTime) / config.spaceWalker.pullOutDuration;
+                pullWeight = pullWeight * pullWeight;
+
+                this.cObj.position.x = cameraStartTarget.x * (pullWeight) + cameraReturnTarget.x * (1 - pullWeight);
+                this.cObj.position.y = cameraStartTarget.y * (pullWeight) + cameraReturnTarget.y * (1 - pullWeight);
+                this.cObj.position.z = cameraStartTarget.z * (pullWeight) + cameraReturnTarget.z * (1 - pullWeight);
+            } else {
+                this.pushOutAnim = false;
+                this.returnPosState = false;
+            }
+        } else {
+            this.cObj.position.x += v.velocity.x * delta;
+            this.cObj.position.y += v.velocity.y * delta;
+            this.cObj.position.z += v.velocity.z * delta;
+
+            direction.subVectors(this.cObj.position, cameraReturnTarget);
+
+            v.raycaster.set(this.cObj.position, direction.normalize(), 0, config.spaceWalker.blockingRayLength);
+
+            intersections = v.raycaster.intersectObject(this.spaceNavMesh, false);
+            if (intersections.length > 0) {
+                if (intersections[0].distance < config.spaceWalker.blockingRayMax) {
+                    cameraStartTarget.copy(this.cObj.position);
+                    this.returnPosState = true;
+                    if (intersections[0].distance < config.spaceWalker.blockingRayMin) {
+                        this._pullOutStartTime = time;
+                        this.pushOutAnim = true;
+                    }
+                }
+            } else {
+                this.returnPosState = false;
+            }
         }
 
-        if (v.moveRight) {
-            v.velocity.x += right.x * v.spaceSpeed * delta;
-            v.velocity.y += right.y * v.spaceSpeed * delta;
-            v.velocity.z += right.z * v.spaceSpeed * delta;
-        } else if (v.moveLeft) {
-            v.velocity.x -= right.x * v.spaceSpeed * delta;
-            v.velocity.y -= right.y * v.spaceSpeed * delta;
-            v.velocity.z -= right.z * v.spaceSpeed * delta;
-        }
-
-        // this.cObj.translateX(v.velocity.x * delta); // why this approach works incorrect?
-        // this.cObj.translateY(v.velocity.y * delta);
-        // this.cObj.translateZ(v.velocity.z * delta);
-        this.cObj.position.x += v.velocity.x * delta;
-        this.cObj.position.y += v.velocity.y * delta;
-        this.cObj.position.z += v.velocity.z * delta;
-    }
-
-    _linesIntersectsXZ(A, B, C, D) {
-        const s1 = new THREE.Vector2(B.x - A.x, B.z - A.z);
-        const s2 = new THREE.Vector2(D.x - C.x, D.z - C.z);
-
-        const s = (-s1.y * (A.x - C.x) + s1.x * (A.z - C.z)) / (-s2.x * s1.y + s1.x * s2.y);
-        const t = (s2.x * (A.z - C.z) - s2.y * (A.x - C.x)) / (-s2.x * s1.y + s1.x * s2.y);
-
-        const doIntersect = s >= 0 && s <= 1 && t >= 0 && t <= 1;
-        return {intersect: doIntersect, A, B};
     }
 
     _rotateOnMouseDownEnable() {

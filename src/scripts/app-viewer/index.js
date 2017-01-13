@@ -32,6 +32,9 @@ class AppViewer {
         const mainNavMesh = this.sceneManager.scene.getObjectByName('navmesh');
         this.controls.addNavMeshes([mainNavMesh]);
         this.controls.addNavMeshes(this.appLogicManager.navMeshes);
+
+        const spaceNavMesh = this.sceneManager.scene.getObjectByName('space_navmesh');
+        this.controls.addSpaceNavMesh(spaceNavMesh);
     }
 
     update(dt) {
