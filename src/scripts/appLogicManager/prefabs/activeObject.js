@@ -10,7 +10,8 @@ import defaultVert from '../../app-viewer/materialDecorator/shaders/default.vert
 import activeObjectSelectionFrag from '../../app-viewer/materialDecorator/shaders/activeObjectSelection.frag';
 
 class ActiveObject {
-    constructor({type, controllerMesh, object, activeObjectsColliders, outline, highlight} = {}) {
+    constructor({type, controllerMesh, object, activeObjectsColliders, outline, highlight,
+        highlightMeshScale, highlightWaveHeight, highlightWaveSpeed, highlightWavePause} = {}) {
         this.type = type;
         this.disposeMessage = null;
 
@@ -33,6 +34,11 @@ class ActiveObject {
 
         this.outlineMesh = null;
         this.highlightMesh = null;
+
+        this.highlightMeshScale = highlightMeshScale || 1.03;
+        this.highlightWaveHeight = highlightWaveHeight || 1.5;
+        this.highlightWaveSpeed = highlightWaveSpeed || 0.75;
+        this.highlightWavePause = highlightWavePause || 0.3;
 
         this.selected = false;
 
@@ -84,9 +90,14 @@ class ActiveObject {
         });
 
         mat.uniforms.diffuse.value = this.deselectedColor;
-        mat.uniforms.opacity.value = 0.2;
+        mat.uniforms.opacity.value = 0.4;
 
         mat.uniforms.time = {value: 0};
+        mat.uniforms.waveHeightSpeedPause = {value: new THREE.Vector3(
+            this.highlightWaveHeight,
+            this.highlightWaveSpeed,
+            this.highlightWavePause
+        )};
 
         const mesh = new THREE.Mesh(geom, mat);
         mesh.name = this.controller.name + '_highlightMesh';
@@ -95,7 +106,7 @@ class ActiveObject {
 
         mesh.matrix.compose(this.controller.position, this.controller.quaternion, this.controller.scale);
         mesh.matrix.decompose(mesh.position, mesh.quaternion, mesh.scale);
-        mesh.scale.multiplyScalar(1.03);
+        mesh.scale.multiplyScalar(this.highlightMeshScale);
 
         this.highlightMesh = mesh;
     }

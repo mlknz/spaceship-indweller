@@ -2,71 +2,17 @@ uniform vec3 diffuse;
 uniform float opacity;
 
 uniform float time;
+uniform vec3 waveHeightSpeedPause;
 
 varying float vWorldPosY;
 
-#ifndef FLAT_SHADED
-
-	varying vec3 vNormal;
-
-#endif
-
-#include <common>
-#include <color_pars_fragment>
-#include <uv_pars_fragment>
-#include <uv2_pars_fragment>
-#include <map_pars_fragment>
-#include <alphamap_pars_fragment>
-#include <aomap_pars_fragment>
-#include <lightmap_pars_fragment>
-#include <envmap_pars_fragment>
-#include <fog_pars_fragment>
-#include <specularmap_pars_fragment>
-#include <logdepthbuf_pars_fragment>
-#include <clipping_planes_pars_fragment>
-
 void main() {
+    float waveHeight = waveHeightSpeedPause.x;
+    float waveSpeed = waveHeightSpeedPause.y;
+    float wavePause = waveHeightSpeedPause.z;
 
-	#include <clipping_planes_fragment>
-
-	vec4 diffuseColor = vec4( diffuse, opacity );
-
-	#include <logdepthbuf_fragment>
-	#include <map_fragment>
-	#include <color_fragment>
-	#include <alphamap_fragment>
-	#include <alphatest_fragment>
-	#include <specularmap_fragment>
-
-	ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );
-
-	// accumulation (baked indirect lighting only)
-	#ifdef USE_LIGHTMAP
-
-		reflectedLight.indirectDiffuse += texture2D( lightMap, vUv2 ).xyz * lightMapIntensity;
-
-	#else
-
-		reflectedLight.indirectDiffuse += vec3( 1.0 );
-
-	#endif
-
-	// modulation
-	#include <aomap_fragment>
-
-	reflectedLight.indirectDiffuse *= diffuseColor.rgb;
-
-	vec3 outgoingLight = reflectedLight.indirectDiffuse;
-
-	#include <normal_flip>
-	#include <envmap_fragment>
-
-	gl_FragColor = vec4( outgoingLight, diffuseColor.a );
-
-	#include <premultiplied_alpha_fragment>
-	#include <tonemapping_fragment>
-	#include <encodings_fragment>
-	#include <fog_fragment>
-
-    gl_FragColor.rgb = diffuse.rgb * mod(vWorldPosY - time / 1.3, 1.5); // vec3( mod(vWorldPosY - time * 1.3, 1.5), 1.0, 1.0 );
+    float wave = mod(vWorldPosY - time * waveSpeed, waveHeight + wavePause); // [0, h+p]
+    wave = max(0., wave - wavePause) / waveHeight; // [0, 1]
+    gl_FragColor.rgb = diffuse.rgb * wave;
+    gl_FragColor.a = opacity * min(wave + 0.5, 1.);
 }

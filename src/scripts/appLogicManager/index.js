@@ -61,7 +61,11 @@ class AppLogicManager {
             type: 'suit',
             controllerMesh: this.spaceSuitMesh,
             activeObjectsColliders: this.activeObjectsColliders,
-            highlight: true
+            highlight: true,
+            highlightMeshScale: 1.02,
+            highlightWaveHeight: 4,
+            highlightWaveSpeed: 2,
+            highlightWavePause: 6
         });
         this.activeObjects.push(this.spaceSuit);
 
@@ -69,7 +73,11 @@ class AppLogicManager {
             type: 'repairKit',
             controllerMesh: this.repairKitMesh,
             activeObjectsColliders: this.activeObjectsColliders,
-            highlight: true
+            highlight: true,
+            highlightMeshScale: 1.05,
+            highlightWaveHeight: 2.7,
+            highlightWaveSpeed: 1.7,
+            highlightWavePause: 1
         });
         this.activeObjects.push(this.repairKit);
 
@@ -77,7 +85,8 @@ class AppLogicManager {
             type: 'controlPanel',
             controllerMesh: this.controlPanelMesh,
             activeObjectsColliders: this.activeObjectsColliders,
-            highlight: true
+            highlight: true,
+            highlightWavePause: 0.7
         });
         this.activeObjects.push(this.controlPanel);
 
@@ -86,7 +95,10 @@ class AppLogicManager {
             controllerMesh: this.outerPipeBrokenMesh,
             object: this.outerPipeRepairedMesh,
             activeObjectsColliders: this.activeObjectsColliders,
-            outline: true, highlight: true
+            outline: true, highlight: true,
+            highlightWaveHeight: 2.9,
+            highlightWaveSpeed: 1.7,
+            highlightWavePause: 2
         });
         this.activeObjects.push(this.outerPipeBroken);
 
