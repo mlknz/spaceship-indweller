@@ -3,6 +3,8 @@ import gamestate from '../gamestate.js';
 
 const pauseEvent = new Event('pause');
 const activateControlPanelEvent = new Event('activateControlPanel');
+const enableSpaceControlsEvent = new Event('enableSpaceControls');
+const disableSpaceControlsEvent = new Event('disableSpaceControls');
 
 import defaultVert from '../../app-viewer/materialDecorator/shaders/default.vert';
 import activeObjectSelectionFrag from '../../app-viewer/materialDecorator/shaders/activeObjectSelection.frag';
@@ -176,7 +178,7 @@ class ActiveObject {
             document.dispatchEvent(toogleDoorEvent);
 
             setTimeout(() => {
-                if (gamestate.doorsOpen.door_root_7) gamestate.inSpace = true;
+                if (gamestate.doorsOpen.door_root_7) document.dispatchEvent(enableSpaceControlsEvent);
             }, config.appLogic.gatewayControlsChangeDecay);
 
         } else if (this.controllableObject.mesh.name === 'door_root_6') {
@@ -189,14 +191,14 @@ class ActiveObject {
             });
             document.dispatchEvent(toogleDoorEvent);
 
-            gamestate.inSpace = false;
+            document.dispatchEvent(disableSpaceControlsEvent);
 
         }
     }
 
     closeDoorGatewayLogic() {
         if (this.controllableObject.mesh.name === 'door_root_7') {
-            gamestate.inSpace = false;
+            document.dispatchEvent(disableSpaceControlsEvent);
         }
     }
 

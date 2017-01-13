@@ -235,7 +235,7 @@ class AppLogicManager {
                 this.activeObjects[i].deselectObject();
             }
 
-            if (this.controls.currentFloorMesh && !this.controls.currentFloorMesh.name.includes('door_nav_blocker')) {
+            if (gamestate.inSpace || (this.controls.currentFloorMesh && !this.controls.currentFloorMesh.name.includes('door_nav_blocker'))) {
 
                 this.fromEyeRaycaster.setFromCamera(this._tV2, this.camera);
                 this._tArr = this.fromEyeRaycaster.intersectObjects(this.activeObjectsColliders);

@@ -162,6 +162,15 @@ class Controls {
         });
         document.addEventListener('pause', () => { this.disableWalker(); });
         document.addEventListener('unpause', () => { this.enableWalker(); });
+
+        document.addEventListener('enableSpaceControls', () => {
+            v.velocity.set(0, 0, 0);
+            gamestate.inSpace = true;
+        });
+        document.addEventListener('disableSpaceControls', () => {
+            v.velocity.set(0, 0, 0);
+            gamestate.inSpace = false;
+        });
     }
 
     enableWalker() {
@@ -359,8 +368,6 @@ class Controls {
         v.velocity.x -= v.velocity.x * 1.5 * delta;
         v.velocity.y -= v.velocity.y * 1.5 * delta;
         v.velocity.z -= v.velocity.z * 1.5 * delta;
-
-        this.walkerControls.getDirection(forward);
 
         forward.set(0, 0, -1);
         right.set(1, 0, 0);
