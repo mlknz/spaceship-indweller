@@ -1,6 +1,3 @@
-const _ = require('lodash');
-const THREE = require('three');
-
 function _createBBox(point, width, height, depth) {
     const min = new THREE.Vector3(-width / 2.0, 0.0, -depth / 2.0);
     const max = new THREE.Vector3(width / 2.0, height, depth / 2.0);
@@ -14,8 +11,12 @@ function _createInstancedGeometryFromMesh(mesh) {
     const instancedGeometry = new THREE.InstancedBufferGeometry();
 
     instancedGeometry.setIndex(mesh.geometry.index);
+    for (const key in mesh.geometry.attributes) {
+        if (mesh.geometry.attributes.hasOwnProperty(key)) {
+            instancedGeometry.addAttribute(key, mesh.geometry.attributes[key]);
+        }
+    }
 
-    _.each(mesh.geometry.attributes, (attribute, attrName) => instancedGeometry.addAttribute(attrName, attribute));
     instancedGeometry.groups = [];
     mesh.geometry.groups.forEach(group => instancedGeometry.addGroup(group.start, group.count, group.materialIndex));
 
@@ -135,7 +136,7 @@ exports.addCustomInstanceAttribute = function(name, mesh, size, divisor, attribu
 
     for (let i = 0, j = 0; i < countInstances; i += divisor) {
         if (needRandomize) {
-            j = _.random(countAttributeVariants - 1);
+            j = Math.random() * (countAttributeVariants - 1);
         } else {
             j = (j < countAttributeVariants) ? j : 0;
         }

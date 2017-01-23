@@ -1,5 +1,3 @@
-const THREE = require('three');
-
 const instancedGeometry = require('./instancedGeometry.js');
 
 class Batcher {
